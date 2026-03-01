@@ -72,7 +72,6 @@ class MoviePySubtitleExtractor:
             if is_punctuation and merged_words:
                 # Append to the previous word
                 merged_words[-1]["text"] += t.text + t.whitespace
-                merged_words[-1]["end_time"] = t.end_ts + time_offset
             else:
                 # It's a valid word (or the first token)
                 merged_words.append({
