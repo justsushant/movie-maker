@@ -1,2 +1,5 @@
 kokoro>=0.9.4
 soundfile
+moviepy
+pillow
+numpy

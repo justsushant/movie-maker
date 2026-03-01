@@ -1,4 +1,10 @@
 .venv
+__pycache__
+
+# All generated run outputs
+output/
+
+# Legacy outputs in root (if any remain)
 *.srt
 *.wav
 *.mp4

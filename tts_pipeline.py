@@ -153,19 +153,4 @@ class MoviePySubtitleExtractor:
                     idx_counter += 1
         print(f"Exported legacy word-level SRT to {subtitle_file}")
 
-if __name__ == "__main__":
-    # Test text with plenty of punctuation
-    test_text = '''
-        The novel concludes with Kautenya accepting the imperfect nature of the Blood Angels. 
-        Despite their grace and beauty, they are haunted by their dark past and tainted origins.
-        "Wait," he said—his voice trembling—"Is this true?"
-    '''
-    
-    print("Generating TTS and extracting timing metadata...")
-    extractor = MoviePySubtitleExtractor(test_text, voice='bm_george', speed=1)
-    
-    # Export all required files
-    extractor.export_moviepy_json("output_moviepy.json")
-    extractor.get_audio("output_moviepy.wav")
-    extractor.get_word_level_subtitles("output_moviepy_word.srt")
-    print("Process complete!")
+
