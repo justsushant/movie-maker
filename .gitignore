@@ -8,3 +8,6 @@ output/
 *.srt
 *.wav
 *.mp4
+
+files/input.txt
+.DS_Store

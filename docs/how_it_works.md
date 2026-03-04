@@ -106,43 +106,29 @@ This hierarchical structure is what makes the rolling highlight possible — the
 
 ---
 
-## Stage 4: Video Rendering
+## Stage 4: Video Rendering (modular subtitles)
 
-**File:** `renderer.py` → `make_frame()`
+**Files:** `renderer.py`, `subtitle/` (composer, layout, renderer, source)
 
-MoviePy calls `make_frame(t)` for every frame of the video. This function builds a PIL image from scratch 30 times per second.
+Rendering uses a **modular subtitle pipeline**: a subtitle **source** (e.g. `JsonSubtitleSource`) loads segments; a **layout** (sentence, word-highlight, word-only, or rolling) turns segments + time into positioned text items; a **renderer** (e.g. `PillowSubtitleRenderer`) draws them onto the frame. All behavior is configured via `SubtitleConfig` (colors, position, mode, font, dimension adaptation). See **docs/subtitles.md** for configuration options and the Python API.
 
-### Frame generation algorithm for time `t`:
-
-```
-1. FIND the sentence where start_time ≤ t ≤ end_time
-   → If no sentence covers time t, return a blank black frame
-
-2. MEASURE each word's pixel width using the font
-   → Calculate the total width of the sentence
-
-3. CENTER the sentence horizontally and vertically on the canvas
-
-4. DRAW each word:
-   → If the word's start_time ≤ t ≤ end_time: draw in YELLOW (highlighted)
-   → Otherwise: draw in WHITE (default)
-```
-
-### Visual result at t=3.1:
+### Frame generation for time `t` (conceptually):
 
 ```
-               Today is a new beginning!
-                        ^^
-                      YELLOW (active word)
+1. SubtitleFrameComposer(t):
+   → source.get_segments_for_time(t)  [or get_all_segments() for rolling]
+   → layout.layout_frame(t, segments, context, config)  → List[PositionedSubtitle]
+   → renderer.render_frame(image, layout, config, context)  → draw and return image
+2. Layout adapts to video size via SubtitleLayoutContext (font size, margins from width/height).
+3. Default mode (sentence_with_word_highlight): current sentence, current word in highlight color.
 ```
 
 ### Final assembly (`create_video`):
 
-1. Load the subtitle JSON and audio WAV
-2. Determine video duration = max(audio length, last subtitle timestamp)
-3. Create a `VideoClip` with `make_frame` as the frame generator
-4. Attach the audio track
-5. Export to MP4 (H.264 video + AAC audio)
+1. Build `SubtitleConfig` from config dict; create `JsonSubtitleSource`, mode-based layout, and `PillowSubtitleRenderer`.
+2. Load audio; determine duration = max(audio length, last subtitle end_time).
+3. Create `SubtitleFrameComposer` with the source, layout, and renderer; pass it as the `VideoClip` frame generator.
+4. Attach the audio track and export to MP4.
 
 ---
 

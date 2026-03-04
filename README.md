@@ -56,6 +56,31 @@ make run       # Run the full pipeline
 make clean     # Delete all run outputs
 ```
 
+## Stress Testing Subtitles
+
+Stress tests are under `tests/` and write outputs to `output/test/`.
+
+### Run stress tests
+
+```bash
+./tests/run_tests.sh
+```
+
+The runner activates your venv first (`.venv` or `venv`) and then runs:
+
+```bash
+python -m pytest tests/ -v
+```
+
+### What stress tests cover
+
+- Multiple text fixtures (`tests/fixtures/text/`): short, long, multi-paragraph, punctuation-heavy, unicode-like, and single-word.
+- Multiple video/subtitle variants: different resolutions and subtitle modes (`sentence`, `word`, `sentence_with_word_highlight`, `rolling`).
+- Render sanity checks:
+  - Output video file is created for each case.
+  - Output is non-empty.
+  - A frame sampled during subtitle visibility has pixels different from pure background (subtitle draw sanity check).
+
 ## Configuration
 
 Edit `config.py` to change any setting — no other files need to be modified:

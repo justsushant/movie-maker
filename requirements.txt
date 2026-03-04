@@ -3,3 +3,4 @@ soundfile
 moviepy
 pillow
 numpy
+pytest

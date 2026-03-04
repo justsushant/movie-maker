@@ -1,4 +1,4 @@
-.PHONY: setup install run clean help
+.PHONY: setup install run test-stress clean help
 
 PYTHON ?= python3.10
 VENV   := .venv
@@ -19,6 +19,9 @@ install: ## Install dependencies into existing venv
 
 run: ## Run the full pipeline (TTS → video)
 	$(PY) main.py
+
+test-stress: ## Run subtitle stress test suite
+	bash tests/run_tests.sh
 
 clean: ## Remove all generated run outputs
 	rm -rf output/

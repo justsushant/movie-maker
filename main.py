@@ -6,16 +6,14 @@ from tts_pipeline import MoviePySubtitleExtractor
 from renderer import create_video
 
 
-def main():
+def run_pipeline(cfg):
     """
-    Orchestrates the full pipeline:
+    Runs the full pipeline with an injected config:
       1. Read input text from files/input.txt
       2. Create a timestamped run directory under output/
       3. Generate TTS audio + subtitle metadata
       4. Render the final video with highlighted subtitles
     """
-    cfg = get_config()
-
     # Create the run directory
     os.makedirs(cfg["run_dir"], exist_ok=True)
     print(f"Run directory: {cfg['run_dir']}")
@@ -51,6 +49,12 @@ def main():
     create_video(cfg)
 
     print(f"\nDone! All outputs saved to {cfg['run_dir']}/")
+
+
+def main():
+    """Entry point for normal CLI usage with default config."""
+    cfg = get_config()
+    run_pipeline(cfg)
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ def get_config(run_name=None):
 
     run_dir = os.path.join("output", run_name)
 
-    return {
+    cfg = {
         # --- Paths ---
         "input_text": os.path.join("files", "input.txt"),
         "run_dir": run_dir,
@@ -34,4 +34,49 @@ def get_config(run_name=None):
         "bg_color": (0, 0, 0),
         "text_color": (255, 255, 255),
         "highlight_color": (255, 255, 0),
+
+        # --- Subtitle Settings (optional, used by SubtitleConfig) ---
+        # These keep the existing defaults but allow overriding via the
+        # nested `subtitle` section if desired.
+        "subtitle": {
+            # one of: \"sentence\", \"word\", \"sentence_with_word_highlight\", \"rolling\"
+            "mode": "sentence_with_word_highlight",
+            # If omitted, base/highlight colors fall back to text_color / highlight_color.
+            # "base_color": (255, 255, 255),
+            # "highlight_color": (255, 255, 0),
+            # "vertical_align": "bottom",
+            # "x_margin": 0.05,
+            # "y_margin": 0.05,
+            # "max_width_ratio": 0.9,
+            # "font_size_strategy": "scale_with_height",
+            # "font_size": 40,
+        },
     }
+
+    return cfg
+
+
+def get_test_config(case_id=None, overrides=None):
+    """
+    Returns config for stress/integration tests.
+
+    All test runs are scoped under output/test:
+    - case_id is None    -> output/test
+    - case_id is "foo"   -> output/test/foo
+    """
+    run_name = "test" if not case_id else os.path.join("test", case_id)
+    cfg = get_config(run_name=run_name)
+
+    if overrides:
+        _deep_update(cfg, overrides)
+
+    return cfg
+
+
+def _deep_update(target, updates):
+    """Recursively updates nested dictionaries in-place."""
+    for key, value in updates.items():
+        if isinstance(value, dict) and isinstance(target.get(key), dict):
+            _deep_update(target[key], value)
+        else:
+            target[key] = value
