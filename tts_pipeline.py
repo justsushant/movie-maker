@@ -7,7 +7,7 @@ from kokoro import KPipeline
 class MoviePySubtitleExtractor:
     """
     Extracts high-quality audio and a hierarchical JSON subtitle structure
-    from Kokoro TTS for use with rolling subtitle effects in MoviePy.
+    from Kokoro TTS for use with subtitle effects in MoviePy.
     """
     def __init__(self, text, lang_code='a', voice='af_heart', speed=1.0):
         self.pipeline = KPipeline(lang_code=lang_code)

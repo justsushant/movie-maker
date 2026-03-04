@@ -12,12 +12,12 @@ class SubtitleMode(str, Enum):
     SENTENCE = "sentence"
     SENTENCE_WITH_WORD_HIGHLIGHT = "sentence_with_word_highlight"
     WORD = "word"
-    ROLLING = "rolling"
+    STACKING = "stacking"
 
 
 @dataclass
-class RollingConfig:
-    """Configuration specific to rolling / scrolling subtitles."""
+class StackingConfig:
+    """Configuration specific to stacking subtitles."""
 
     speed: float = 1.0
     max_visible_lines: int = 3
@@ -60,8 +60,15 @@ class SubtitleConfig:
     scale_font_to_height: bool = True
     max_lines_for_height: Optional[int] = None
 
-    # Rolling behavior
-    rolling: RollingConfig = field(default_factory=RollingConfig)
+    # Overflow / multiline behavior
+    multiline_enabled: bool = False
+    overflow_strategy: str = "chunk_single_line"
+    min_words_per_chunk: int = 1
+    max_words_per_chunk: Optional[int] = None
+    prefer_break_on_punctuation: bool = True
+
+    # Stacking behavior
+    stacking: StackingConfig = field(default_factory=StackingConfig)
 
     @staticmethod
     def _parse_mode(raw_mode: Optional[str]) -> SubtitleMode:
@@ -75,7 +82,7 @@ class SubtitleConfig:
             "sentence_with_word_highlight": SubtitleMode.SENTENCE_WITH_WORD_HIGHLIGHT,
             "sentence-word-highlight": SubtitleMode.SENTENCE_WITH_WORD_HIGHLIGHT,
             "sentence_word_highlight": SubtitleMode.SENTENCE_WITH_WORD_HIGHLIGHT,
-            "rolling": SubtitleMode.ROLLING,
+            "stacking": SubtitleMode.STACKING,
         }
         return mapping.get(normalized, SubtitleMode.SENTENCE_WITH_WORD_HIGHLIGHT)
 
@@ -123,13 +130,24 @@ class SubtitleConfig:
         line_spacing = float(subtitle_section.get("line_spacing", 1.0))
         align = subtitle_section.get("align", "center")
 
-        # Rolling config
-        rolling_section = subtitle_section.get("rolling", {}) or {}
-        rolling = RollingConfig(
-            speed=float(rolling_section.get("speed", 1.0)),
-            max_visible_lines=int(rolling_section.get("max_visible_lines", 3)),
-            direction=rolling_section.get("direction", "up"),
-            fade_old_lines=bool(rolling_section.get("fade_old_lines", True)),
+        # Overflow / multiline
+        multiline_enabled = bool(subtitle_section.get("multiline_enabled", False))
+        overflow_strategy = subtitle_section.get("overflow_strategy", "chunk_single_line")
+        min_words_per_chunk = int(subtitle_section.get("min_words_per_chunk", 1))
+        max_words_per_chunk = subtitle_section.get("max_words_per_chunk")
+        if max_words_per_chunk is not None:
+            max_words_per_chunk = int(max_words_per_chunk)
+        prefer_break_on_punctuation = bool(
+            subtitle_section.get("prefer_break_on_punctuation", True)
+        )
+
+        # Stacking config
+        stacking_section = subtitle_section.get("stacking", {}) or {}
+        stacking = StackingConfig(
+            speed=float(stacking_section.get("speed", 1.0)),
+            max_visible_lines=int(stacking_section.get("max_visible_lines", 3)),
+            direction=stacking_section.get("direction", "up"),
+            fade_old_lines=bool(stacking_section.get("fade_old_lines", True)),
         )
 
         return cls(
@@ -149,6 +167,11 @@ class SubtitleConfig:
             align=align,
             scale_font_to_height=scale_font_to_height,
             max_lines_for_height=max_lines_for_height,
-            rolling=rolling,
+            multiline_enabled=multiline_enabled,
+            overflow_strategy=overflow_strategy,
+            min_words_per_chunk=min_words_per_chunk,
+            max_words_per_chunk=max_words_per_chunk,
+            prefer_break_on_punctuation=prefer_break_on_punctuation,
+            stacking=stacking,
         )
 

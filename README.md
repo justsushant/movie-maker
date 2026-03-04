@@ -2,7 +2,7 @@
 
 Generate narrated videos with **word-by-word subtitle highlighting** — powered by [Kokoro TTS](https://github.com/hexgrad/kokoro) and [MoviePy](https://zulko.github.io/moviepy/).
 
-Write text → run one command → get a video with synced audio and rolling highlighted subtitles.
+Write text → run one command → get a video with synced audio and highlighted subtitles.
 
 ## Quick Start
 
@@ -75,7 +75,7 @@ python -m pytest tests/ -v
 ### What stress tests cover
 
 - Multiple text fixtures (`tests/fixtures/text/`): short, long, multi-paragraph, punctuation-heavy, unicode-like, and single-word.
-- Multiple video/subtitle variants: different resolutions and subtitle modes (`sentence`, `word`, `sentence_with_word_highlight`, `rolling`).
+- Multiple video/subtitle variants: different resolutions and subtitle modes (`sentence`, `word`, `sentence_with_word_highlight`, `stacking`).
 - Render sanity checks:
   - Output video file is created for each case.
   - Output is non-empty.

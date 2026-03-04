@@ -10,7 +10,7 @@ from moviepy import AudioFileClip, VideoClip
 from subtitle_config import SubtitleConfig, SubtitleMode
 from subtitle.composer import SubtitleFrameComposer
 from subtitle.interfaces import ISubtitleLayout, ISubtitleRenderer, ISubtitleSource
-from subtitle.layouts import RollingLayout, SentenceLayout, WordHighlightLayout, WordOnlyLayout
+from subtitle.layouts import StackingLayout, SentenceLayout, WordHighlightLayout, WordOnlyLayout
 from subtitle.renderer import PillowSubtitleRenderer
 from subtitle.source import JsonSubtitleSource
 
@@ -28,8 +28,8 @@ def _layout_for_mode(mode: SubtitleMode):
         return WordHighlightLayout()
     if mode == SubtitleMode.WORD:
         return WordOnlyLayout()
-    if mode == SubtitleMode.ROLLING:
-        return RollingLayout()
+    if mode == SubtitleMode.STACKING:
+        return StackingLayout()
     return WordHighlightLayout()
 
 

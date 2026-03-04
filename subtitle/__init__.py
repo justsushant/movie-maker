@@ -11,7 +11,7 @@ from subtitle.interfaces import (
 )
 from subtitle.source import JsonSubtitleSource
 from subtitle.layouts import (
-    RollingLayout,
+    StackingLayout,
     SentenceLayout,
     WordHighlightLayout,
     WordOnlyLayout,
@@ -31,7 +31,7 @@ __all__ = [
     "SentenceLayout",
     "WordHighlightLayout",
     "WordOnlyLayout",
-    "RollingLayout",
+    "StackingLayout",
     "PillowSubtitleRenderer",
     "SubtitleFrameComposer",
 ]

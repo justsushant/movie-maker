@@ -9,7 +9,7 @@ from typing import Any, Dict, Optional, Tuple
 from subtitle_config import SubtitleConfig, SubtitleMode
 from subtitle.interfaces import ISubtitleLayout, ISubtitleRenderer, ISubtitleSource
 from subtitle.layouts import (
-    RollingLayout,
+    StackingLayout,
     SentenceLayout,
     WordHighlightLayout,
     WordOnlyLayout,
@@ -27,8 +27,8 @@ def _default_layout(mode: SubtitleMode) -> ISubtitleLayout:
         return WordHighlightLayout()
     if mode == SubtitleMode.WORD:
         return WordOnlyLayout()
-    if mode == SubtitleMode.ROLLING:
-        return RollingLayout()
+    if mode == SubtitleMode.STACKING:
+        return StackingLayout()
     return WordHighlightLayout()
 
 

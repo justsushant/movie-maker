@@ -43,7 +43,7 @@ class SubtitleFrameComposer:
         )
 
     def __call__(self, t: float) -> np.ndarray:
-        if self._subtitle_config.mode == SubtitleMode.ROLLING:
+        if self._subtitle_config.mode == SubtitleMode.STACKING:
             segments = self._source.get_all_segments()
         else:
             segments = self._source.get_segments_for_time(t)

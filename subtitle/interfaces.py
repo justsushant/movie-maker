@@ -100,7 +100,7 @@ class ISubtitleSource(Protocol):
         ...
 
     def get_all_segments(self) -> List[SubtitleSegment]:
-        """Return all segments in order (for rolling / full timeline)."""
+        """Return all segments in order (for stacking / full timeline)."""
         ...
 
 

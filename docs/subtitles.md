@@ -4,11 +4,11 @@ This document describes the configurable subtitle pipeline: configuration option
 
 ## Overview
 
-Subtitles are produced by a **source** (e.g. JSON file) → **layout** (sentence/word/rolling) → **renderer** (PIL drawing). All behavior is driven by `SubtitleConfig` and optional custom implementations of the source, layout, and renderer interfaces.
+Subtitles are produced by a **source** (e.g. JSON file) → **layout** (sentence/word/stacking) → **renderer** (PIL drawing). All behavior is driven by `SubtitleConfig` and optional custom implementations of the source, layout, and renderer interfaces.
 
-- **SubtitleConfig** — Colors, position, font, mode (sentence / word / sentence-with-word-highlight / rolling), and dimension adaptation.
-- **ISubtitleSource** — Supplies segments for a given time (or all segments for rolling). Default: `JsonSubtitleSource(json_path)`.
-- **ISubtitleLayout** — Turns segments + time into a list of `PositionedSubtitle` (text, x, y, color, font_size). Implementations: `SentenceLayout`, `WordHighlightLayout`, `WordOnlyLayout`, `RollingLayout`.
+- **SubtitleConfig** — Colors, position, font, mode (sentence / word / sentence-with-word-highlight / stacking), and dimension adaptation.
+- **ISubtitleSource** — Supplies segments for a given time (or all segments for stacking). Default: `JsonSubtitleSource(json_path)`.
+- **ISubtitleLayout** — Turns segments + time into a list of `PositionedSubtitle` (text, x, y, color, font_size). Implementations: `SentenceLayout`, `WordHighlightLayout`, `WordOnlyLayout`, `StackingLayout`.
 - **ISubtitleRenderer** — Draws `PositionedSubtitle` items onto a PIL image. Default: `PillowSubtitleRenderer`.
 
 Layout is **dimension-aware**: `SubtitleLayoutContext.from_config(width, height, subtitle_config)` computes font size, margins, and line height from the video size and config (e.g. scale font with height, respect margins).
@@ -42,7 +42,7 @@ subtitle_config = SubtitleConfig(
 
 | Option | Description | Default |
 |--------|-------------|--------|
-| `mode` | `sentence`, `word`, `sentence_with_word_highlight`, `rolling` | `sentence_with_word_highlight` |
+| `mode` | `sentence`, `word`, `sentence_with_word_highlight`, `stacking` | `sentence_with_word_highlight` |
 | `base_color` | RGB for non-highlighted text | `(255, 255, 255)` |
 | `highlight_color` | RGB for highlighted word | `(255, 255, 0)` |
 | `vertical_align` | `bottom`, `center`, `top` | `bottom` |
@@ -51,17 +51,22 @@ subtitle_config = SubtitleConfig(
 | `font_path` | Optional TTF path | None (system default) |
 | `font_size` | Fixed size if set; else scaled by height | None |
 | `scale_font_to_height` | Scale font with video height | True |
-| `rolling.max_visible_lines` | Lines shown in rolling mode | 3 |
-| `rolling.direction` | `up` or `down` | `up` |
+| `multiline_enabled` | Allow multiline wrapping in sentence mode | `False` |
+| `overflow_strategy` | How to handle overflow when multiline is off | `chunk_single_line` |
+| `min_words_per_chunk` | Minimum words per single-line chunk | `1` |
+| `max_words_per_chunk` | Force break after N words (optional) | None |
+| `prefer_break_on_punctuation` | Prefer chunk breaks after punctuation | `True` |
+| `stacking.max_visible_lines` | Lines shown in stacking mode | 3 |
+| `stacking.direction` | `up` or `down` | `up` |
 
 In the global config dict you can put a `subtitle` key with these options; `SubtitleConfig.from_dict(cfg)` reads that and falls back to top-level `text_color`, `highlight_color`, `font_size`.
 
 ## Subtitle modes
 
-- **SENTENCE** — One sentence at a time, full text in base color.
+- **SENTENCE** — One sentence at a time in base color. When `multiline_enabled` is `False` (the default), long sentences are automatically split into timed single-line chunks derived from word timings so they never overflow the screen. When `multiline_enabled` is `True`, text wraps into multiple lines instead.
 - **SENTENCE_WITH_WORD_HIGHLIGHT** — Same sentence with the current word in `highlight_color` (default behavior).
 - **WORD** — Only the current word, larger and centered.
-- **ROLLING** — Last N sentences visible; newest at bottom, scrolling up.
+- **STACKING** — Last N sentences visible; newest at bottom, older ones stacked above.
 
 ## Python API
 

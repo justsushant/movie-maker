@@ -102,7 +102,7 @@ Words are grouped into sentence-sized chunks for display. Each sentence becomes 
 }
 ```
 
-This hierarchical structure is what makes the rolling highlight possible — the renderer knows both *which sentence to display* and *which word within it to highlight*.
+This hierarchical structure is what makes the highlight possible — the renderer knows both *which sentence to display* and *which word within it to highlight*.
 
 ---
 
@@ -110,13 +110,13 @@ This hierarchical structure is what makes the rolling highlight possible — the
 
 **Files:** `renderer.py`, `subtitle/` (composer, layout, renderer, source)
 
-Rendering uses a **modular subtitle pipeline**: a subtitle **source** (e.g. `JsonSubtitleSource`) loads segments; a **layout** (sentence, word-highlight, word-only, or rolling) turns segments + time into positioned text items; a **renderer** (e.g. `PillowSubtitleRenderer`) draws them onto the frame. All behavior is configured via `SubtitleConfig` (colors, position, mode, font, dimension adaptation). See **docs/subtitles.md** for configuration options and the Python API.
+Rendering uses a **modular subtitle pipeline**: a subtitle **source** (e.g. `JsonSubtitleSource`) loads segments; a **layout** (sentence, word-highlight, word-only, or stacking) turns segments + time into positioned text items; a **renderer** (e.g. `PillowSubtitleRenderer`) draws them onto the frame. All behavior is configured via `SubtitleConfig` (colors, position, mode, font, dimension adaptation). See **docs/subtitles.md** for configuration options and the Python API.
 
 ### Frame generation for time `t` (conceptually):
 
 ```
 1. SubtitleFrameComposer(t):
-   → source.get_segments_for_time(t)  [or get_all_segments() for rolling]
+   → source.get_segments_for_time(t)  [or get_all_segments() for stacking]
    → layout.layout_frame(t, segments, context, config)  → List[PositionedSubtitle]
    → renderer.render_frame(image, layout, config, context)  → draw and return image
 2. Layout adapts to video size via SubtitleLayoutContext (font size, margins from width/height).

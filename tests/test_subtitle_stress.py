@@ -10,7 +10,7 @@ from config import get_test_config
 from main import run_pipeline
 from subtitle.composer import SubtitleFrameComposer
 from subtitle.interfaces import SubtitleLayoutContext
-from subtitle.layouts import RollingLayout, SentenceLayout, WordHighlightLayout, WordOnlyLayout
+from subtitle.layouts import StackingLayout, SentenceLayout, WordHighlightLayout, WordOnlyLayout
 from subtitle.renderer import PillowSubtitleRenderer
 from subtitle.source import JsonSubtitleSource
 from subtitle_config import SubtitleConfig, SubtitleMode
@@ -21,8 +21,8 @@ def _layout_for_mode(mode: SubtitleMode):
         return SentenceLayout()
     if mode == SubtitleMode.WORD:
         return WordOnlyLayout()
-    if mode == SubtitleMode.ROLLING:
-        return RollingLayout()
+    if mode == SubtitleMode.STACKING:
+        return StackingLayout()
     return WordHighlightLayout()
 
 
@@ -85,6 +85,18 @@ def _assert_sentence_layout_wraps(cfg: dict, json_path: Path, subtitle_time: flo
     assert len(laid_out) >= 2, "Expected wrapped multi-line sentence layout for long paragraph"
 
 
+def _assert_single_line_layout(cfg: dict, json_path: Path, subtitle_time: float) -> None:
+    """Assert sentence mode produces at most one PositionedSubtitle (single-line chunking)."""
+    subtitle_cfg = SubtitleConfig.from_dict(cfg)
+    context = SubtitleLayoutContext.from_config(cfg["width"], cfg["height"], subtitle_cfg)
+    source = JsonSubtitleSource(json_path)
+    segments = source.get_segments_for_time(subtitle_time)
+    laid_out = SentenceLayout().layout_frame(subtitle_time, segments, context, subtitle_cfg)
+    assert len(laid_out) <= 1, (
+        f"Expected single-line layout (multiline disabled), got {len(laid_out)} lines"
+    )
+
+
 TEXT_CASES = [
     "short_single_sentence.txt",
     "long_paragraph.txt",
@@ -114,12 +126,12 @@ VIDEO_VARIANTS = [
         "subtitle": {"mode": "word", "vertical_align": "center"},
     },
     {
-        "id": "1080_rolling",
+        "id": "1080_stacking",
         "width": 1920,
         "height": 1080,
         "subtitle": {
-            "mode": "rolling",
-            "rolling": {"max_visible_lines": 3, "direction": "up"},
+            "mode": "stacking",
+            "stacking": {"max_visible_lines": 3, "direction": "up"},
         },
     },
     {
@@ -133,6 +145,18 @@ VIDEO_VARIANTS = [
         "width": 1080,
         "height": 1920,
         "subtitle": {"mode": "sentence_with_word_highlight", "vertical_align": "bottom"},
+    },
+    {
+        "id": "720_sentence_multiline",
+        "width": 1280,
+        "height": 720,
+        "subtitle": {"mode": "sentence", "vertical_align": "bottom", "multiline_enabled": True},
+    },
+    {
+        "id": "phone_720x1280_sentence_multiline",
+        "width": 720,
+        "height": 1280,
+        "subtitle": {"mode": "sentence", "vertical_align": "bottom", "multiline_enabled": True},
     },
 ]
 
@@ -176,10 +200,20 @@ def test_subtitle_stress_rendering(
     visible_time = (segments[0].start_time + segments[0].end_time) / 2.0
     _assert_frame_has_subtitle_pixels(cfg, Path(cfg["json_file"]), visible_time)
 
-    is_long_sentence_case = text_filename == "long_paragraph.txt" and variant["id"] in {
+    is_long = text_filename == "long_paragraph.txt"
+    is_sentence_singleline = variant["id"] in {
         "720_sentence",
         "phone_720x1280_sentence",
     }
-    if is_long_sentence_case:
+    is_sentence_multiline = variant["id"] in {
+        "720_sentence_multiline",
+        "phone_720x1280_sentence_multiline",
+    }
+
+    if is_long and is_sentence_singleline:
+        _assert_single_line_layout(cfg, Path(cfg["json_file"]), visible_time)
+        _assert_no_horizontal_edge_clipping(cfg, Path(cfg["json_file"]), visible_time)
+
+    if is_long and is_sentence_multiline:
         _assert_sentence_layout_wraps(cfg, Path(cfg["json_file"]), visible_time)
         _assert_no_horizontal_edge_clipping(cfg, Path(cfg["json_file"]), visible_time)

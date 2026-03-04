@@ -39,7 +39,7 @@ def get_config(run_name=None):
         # These keep the existing defaults but allow overriding via the
         # nested `subtitle` section if desired.
         "subtitle": {
-            # one of: \"sentence\", \"word\", \"sentence_with_word_highlight\", \"rolling\"
+            # one of: "sentence", "word", "sentence_with_word_highlight", "stacking"
             "mode": "sentence_with_word_highlight",
             # If omitted, base/highlight colors fall back to text_color / highlight_color.
             # "base_color": (255, 255, 255),
@@ -50,6 +50,11 @@ def get_config(run_name=None):
             # "max_width_ratio": 0.9,
             # "font_size_strategy": "scale_with_height",
             # "font_size": 40,
+            "multiline_enabled": False,
+            "overflow_strategy": "chunk_single_line",
+            # "min_words_per_chunk": 1,
+            # "max_words_per_chunk": None,
+            # "prefer_break_on_punctuation": True,
         },
     }
 
