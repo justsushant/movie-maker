@@ -1,18 +1,52 @@
 import os
 import shutil
 import json
-import importlib.util
 from pathlib import Path
-
-# Import from config.py file (not config/ package) to avoid naming conflict
-_config_spec = importlib.util.spec_from_file_location("config_module", "config.py")
-config_py = importlib.util.module_from_spec(_config_spec)
-_config_spec.loader.exec_module(config_py)
+from datetime import datetime
 
 from tts.config import TTSConfig
 from config.video_config import VideoConfig
-from subtitle_config import SubtitleConfig
+from subtitle_config import SubtitleConfig, SubtitleMode
 from api.library import generate_video_from_file
+
+
+def get_default_tts_config() -> TTSConfig:
+    """Return default TTS configuration for CLI."""
+    return TTSConfig(
+        lang_code="a",
+        voice="af_heart",
+        speed=1.0
+    )
+
+
+def get_default_video_config() -> VideoConfig:
+    """Return default video configuration for CLI."""
+    return VideoConfig(
+        width=1920,
+        height=1080,
+        fps=30,
+        bg_color=(0, 0, 0)
+    )
+
+
+def get_default_subtitle_config() -> SubtitleConfig:
+    """Return default subtitle configuration for CLI."""
+    return SubtitleConfig(
+        mode=SubtitleMode.SENTENCE_WITH_WORD_HIGHLIGHT,
+        base_color=(255, 255, 255),
+        highlight_color=(255, 255, 0),
+        font_size=40,
+        multiline_enabled=False,
+        overflow_strategy="chunk_single_line"
+    )
+
+
+def create_run_directory() -> Path:
+    """Create timestamped output directory."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_dir = Path("output") / f"run_{timestamp}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    return run_dir
 
 
 def _generate_srt_from_json(json_file: Path, srt_file: Path) -> None:
@@ -48,22 +82,23 @@ def _generate_srt_from_json(json_file: Path, srt_file: Path) -> None:
                     idx += 1
 
 
-def run_pipeline(cfg):
+def run_pipeline():
     """
-    Runs the full pipeline with an injected config:
+    Runs the full pipeline:
       1. Read input text from files/input.txt
       2. Create a timestamped run directory under output/
       3. Generate TTS audio + subtitle metadata
       4. Render the final video with highlighted subtitles
     """
-    # Create the run directory
-    os.makedirs(cfg["run_dir"], exist_ok=True)
-    print(f"Run directory: {cfg['run_dir']}")
-
+    # Configuration
+    input_file = Path("files/input.txt")
+    run_dir = create_run_directory()
+    
+    print(f"Run directory: {run_dir}")
+    
     # 1. Check input text exists and is not empty
-    input_path = cfg["input_text"]
-    print(f"Reading input text from {input_path}...")
-    with open(input_path, "r", encoding="utf-8") as f:
+    print(f"Reading input text from {input_file}...")
+    with open(input_file, "r", encoding="utf-8") as f:
         text = f.read()
 
     if not text.strip():
@@ -71,18 +106,18 @@ def run_pipeline(cfg):
         return
 
     # Copy input.txt into the run directory for reproducibility
-    shutil.copy2(input_path, os.path.join(cfg["run_dir"], "input.txt"))
+    shutil.copy2(input_file, run_dir / "input.txt")
 
-    # 2. Build configuration objects from legacy config dict
-    tts_config = TTSConfig.from_dict(cfg)
-    video_config = VideoConfig.from_dict(cfg)
-    subtitle_config = SubtitleConfig.from_dict(cfg)
+    # 2. Build configuration objects
+    tts_config = get_default_tts_config()
+    video_config = get_default_video_config()
+    subtitle_config = get_default_subtitle_config()
 
-    # 3. Use new library API to generate video
+    # 3. Use library API to generate video
     print("Generating video using library API...")
     video_path = generate_video_from_file(
-        input_file=Path(input_path),
-        output_dir=Path(cfg["run_dir"]),
+        input_file=input_file,
+        output_dir=run_dir,
         tts_config=tts_config,
         video_config=video_config,
         subtitle_config=subtitle_config
@@ -90,18 +125,17 @@ def run_pipeline(cfg):
 
     # 4. Generate SRT file for compatibility (CLI-specific feature)
     print("Generating SRT subtitles...")
-    json_file = Path(cfg["run_dir"]) / "output_moviepy.json"
-    srt_file = Path(cfg["srt_file"])
+    json_file = run_dir / "output_moviepy.json"
+    srt_file = run_dir / "output_moviepy_word.srt"
     _generate_srt_from_json(json_file, srt_file)
 
-    print(f"\nDone! All outputs saved to {cfg['run_dir']}/")
+    print(f"\nDone! All outputs saved to {run_dir}/")
     print(f"Video file: {video_path}")
 
 
 def main():
     """Entry point for normal CLI usage with default config."""
-    cfg = config_py.get_config()
-    run_pipeline(cfg)
+    run_pipeline()
 
 
 if __name__ == "__main__":
