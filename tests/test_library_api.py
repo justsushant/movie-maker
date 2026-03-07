@@ -416,9 +416,9 @@ class TestGenerateVideoFromFileIntegration:
     with file input.
     """
     
-    def test_generates_video_from_short_sentence_fixture(self, fixture_text_dir, test_output_root):
-        """Test generating video from short_single_sentence.txt fixture."""
-        input_file = fixture_text_dir / "short_single_sentence.txt"
+    def test_generates_video_from_short_sentence_fixture(self, real_world_fixture_dir, test_output_root):
+        """Test generating video from educational_explainer.txt fixture."""
+        input_file = real_world_fixture_dir / "educational_explainer.txt"
         output_dir = test_output_root / "integration_file_short"
         
         # Generate video
@@ -432,9 +432,9 @@ class TestGenerateVideoFromFileIntegration:
         # Verify video is not empty
         assert video_path.stat().st_size > 0, "Video file should not be empty"
     
-    def test_generates_video_from_long_paragraph_fixture(self, fixture_text_dir, test_output_root):
-        """Test generating video from long_paragraph.txt fixture."""
-        input_file = fixture_text_dir / "long_paragraph.txt"
+    def test_generates_video_from_long_paragraph_fixture(self, real_world_fixture_dir, test_output_root):
+        """Test generating video from story_narration.txt fixture."""
+        input_file = real_world_fixture_dir / "story_narration.txt"
         output_dir = test_output_root / "integration_file_long"
         
         # Generate video
@@ -449,9 +449,9 @@ class TestGenerateVideoFromFileIntegration:
         
         assert len(subtitles) > 1, "Long paragraph should produce multiple segments"
     
-    def test_generates_video_from_multi_paragraph_fixture(self, fixture_text_dir, test_output_root):
-        """Test generating video from multi_paragraph.txt fixture."""
-        input_file = fixture_text_dir / "multi_paragraph.txt"
+    def test_generates_video_from_multi_paragraph_fixture(self, real_world_fixture_dir, test_output_root):
+        """Test generating video from product_demo.txt fixture."""
+        input_file = real_world_fixture_dir / "product_demo.txt"
         output_dir = test_output_root / "integration_file_multi"
         
         # Generate video
@@ -462,9 +462,9 @@ class TestGenerateVideoFromFileIntegration:
         assert video_path.stat().st_size > 0
     
     @pytest.mark.xfail(reason="Kokoro TTS returns None timestamps for certain punctuation patterns (quotes, dashes) - known limitation")
-    def test_generates_video_from_punctuation_heavy_fixture(self, fixture_text_dir, test_output_root):
+    def test_generates_video_from_punctuation_heavy_fixture(self, technical_fixture_dir, test_output_root):
         """Test generating video from punctuation_heavy.txt fixture."""
-        input_file = fixture_text_dir / "punctuation_heavy.txt"
+        input_file = technical_fixture_dir / "punctuation_heavy.txt"
         output_dir = test_output_root / "integration_file_punct"
         
         # Generate video
@@ -488,9 +488,9 @@ class TestGenerateVideoFromFileIntegration:
         words_with_punct = [w for w in all_words if any(p in w for p in "!?,.;:")]
         assert len(words_with_punct) > 0, "Punctuation should be present in words"
     
-    def test_generates_video_with_custom_configs_from_file(self, fixture_text_dir, test_output_root):
+    def test_generates_video_with_custom_configs_from_file(self, real_world_fixture_dir, test_output_root):
         """Test generating video from file with custom configurations."""
-        input_file = fixture_text_dir / "short_single_sentence.txt"
+        input_file = real_world_fixture_dir / "educational_explainer.txt"
         output_dir = test_output_root / "integration_file_custom"
         
         # Custom configs

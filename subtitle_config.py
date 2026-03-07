@@ -175,3 +175,41 @@ class SubtitleConfig:
             stacking=stacking,
         )
 
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert SubtitleConfig to a dictionary format compatible with from_dict().
+
+        Returns a nested dictionary with a 'subtitle' section containing all
+        configuration values.
+        """
+        return {
+            "mode": self.mode.value,
+            "base_color": self.base_color,
+            "highlight_color": self.highlight_color,
+            "shadow_color": self.shadow_color,
+            "outline_color": self.outline_color,
+            "vertical_align": self.vertical_align,
+            "x_margin": self.x_margin,
+            "y_margin": self.y_margin,
+            "max_width_ratio": self.max_width_ratio,
+            "font_path": self.font_path,
+            "font_size_strategy": self.font_size_strategy,
+            "font_size": self.font_size,
+            "line_spacing": self.line_spacing,
+            "align": self.align,
+            "scale_font_to_height": self.scale_font_to_height,
+            "max_lines_for_height": self.max_lines_for_height,
+            "multiline_enabled": self.multiline_enabled,
+            "overflow_strategy": self.overflow_strategy,
+            "min_words_per_chunk": self.min_words_per_chunk,
+            "max_words_per_chunk": self.max_words_per_chunk,
+            "prefer_break_on_punctuation": self.prefer_break_on_punctuation,
+            "stacking": {
+                "speed": self.stacking.speed,
+                "max_visible_lines": self.stacking.max_visible_lines,
+                "direction": self.stacking.direction,
+                "fade_old_lines": self.stacking.fade_old_lines,
+            },
+        }
+
+

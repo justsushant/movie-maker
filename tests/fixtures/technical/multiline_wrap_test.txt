@@ -1,0 +1,1 @@
+This is an intentionally long sentence designed to test text wrapping behavior when the content exceeds the available width in narrow layouts and must be split across multiple lines.

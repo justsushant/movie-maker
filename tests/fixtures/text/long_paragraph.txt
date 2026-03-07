@@ -1,1 +1,0 @@
-This is a longer paragraph that intentionally contains several clauses and transitions, so we can evaluate subtitle segmentation, wrapping behavior, and readability when the line carries more linguistic complexity than a short sentence.

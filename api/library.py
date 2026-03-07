@@ -106,6 +106,8 @@ def generate_video_from_text(
         "height": video_config.height,
         "fps": video_config.fps,
         "bg_color": video_config.bg_color,
+        # Add subtitle configuration
+        "subtitle": subtitle_config.to_dict(),
     }
     
     # Render video with subtitles
