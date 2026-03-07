@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Union, Protocol
+from typing import Union, Protocol, Optional
 import numpy as np
 
 
@@ -64,6 +64,14 @@ class TransitionType(Enum):
     GLITCH = "glitch"
 
 
+class BeatSync(Enum):
+    """Controls how transitions align with audio beats (Phase 3)."""
+    
+    NONE = "none"                    # Use declared timing (default)
+    NEAREST_BEAT = "nearest_beat"    # Snap transition start to nearest beat
+    BEAT_GRID = "beat_grid"          # Snap both start and end to beats
+
+
 class TransitionFunction(Protocol):
     """Protocol for transition functions."""
     
@@ -117,6 +125,7 @@ class Transition:
     type: TransitionType
     duration: float  # seconds
     easing: 'EasingFunction' = None  # defaults to ease_in_out_cubic
+    sync: BeatSync = BeatSync.NONE  # Phase 3: beat synchronization mode
     
     def __post_init__(self):
         if self.duration <= 0:
@@ -144,6 +153,7 @@ class Scene:
     resolution: tuple[int, int] = (1920, 1080)
     fps: int = 30
     transitions: list[Transition] = field(default_factory=list)
+    audio: Optional[Union[str, Path]] = None  # Phase 3: audio file for analysis
     
     def __post_init__(self):
         # Validate transitions count (only if there are clips)

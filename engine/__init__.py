@@ -2,7 +2,8 @@
 Video generation engine for PRISM.
 
 This module provides a clip-based video composition system that generates
-frames from image sequences with camera motion effects (Ken Burns, pan, zoom).
+frames from image sequences with camera motion effects (Ken Burns, pan, zoom),
+transitions, visual effects, and audio-reactive features.
 """
 
 from engine.scene import Scene, ImageClip, MotionPreset
@@ -17,6 +18,9 @@ from engine.camera import VirtualCamera, Rect, compute_motion_path
 from engine.planner import ScenePlanner, ResolvedTimeline, ResolvedClip
 from engine.renderer import FrameRenderer
 from engine.image_loader import ImageLoader
+
+# Audio module (Phase 3) - lazy import to avoid requiring librosa
+from engine.audio import AudioAnalyzer, AudioSync
 
 __all__ = [
     # Scene DSL
@@ -40,4 +44,7 @@ __all__ = [
     # Rendering
     "FrameRenderer",
     "ImageLoader",
+    # Audio (Phase 3)
+    "AudioAnalyzer",
+    "AudioSync",
 ]
