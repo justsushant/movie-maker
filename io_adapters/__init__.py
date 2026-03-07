@@ -1,4 +1,4 @@
-"""I/O abstractions for KokoroMoviePy.
+"""I/O abstractions for PRISM.
 
 This module provides interfaces and implementations for input/output operations,
 enabling testability and flexibility in how data is read and written.

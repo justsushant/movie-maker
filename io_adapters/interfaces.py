@@ -1,4 +1,4 @@
-"""I/O interfaces for KokoroMoviePy.
+"""I/O interfaces for PRISM.
 
 This module defines abstract interfaces for input/output operations,
 following the Dependency Inversion Principle to enable testability

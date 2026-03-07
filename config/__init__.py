@@ -1,4 +1,4 @@
-"""Configuration classes for KokoroMoviePy."""
+"""Configuration classes for PRISM."""
 
 from config.io_config import IOConfig
 from config.video_config import VideoConfig

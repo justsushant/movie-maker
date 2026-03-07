@@ -2,7 +2,7 @@
 
 ## Overview
 
-KokoroMoviePy follows a **layered, modular architecture** built on SOLID principles and dependency injection. The refactored codebase separates concerns into distinct layers (TTS, processing, I/O, rendering) with clear interfaces between components, enabling testability, extensibility, and maintainability.
+PRISM follows a **layered, modular architecture** built on SOLID principles and dependency injection. The refactored codebase separates concerns into distinct layers (TTS, processing, I/O, rendering) with clear interfaces between components, enabling testability, extensibility, and maintainability.
 
 This document explains the architectural principles applied throughout the codebase, the dependency injection pattern used, and how components interact to produce narrated videos.
 
@@ -12,7 +12,7 @@ This document explains the architectural principles applied throughout the codeb
 
 **Definition:** Each class should have one, and only one, reason to change.
 
-**Application in KokoroMoviePy:**
+**Application in PRISM:**
 
 - **`KokoroTTSEngine`**: Responsible only for TTS generation using the Kokoro library
   - Does NOT handle punctuation merging, sentence grouping, or file I/O
@@ -36,7 +36,7 @@ This document explains the architectural principles applied throughout the codeb
 
 **Definition:** Software entities should be open for extension but closed for modification.
 
-**Application in KokoroMoviePy:**
+**Application in PRISM:**
 
 - **Adding new TTS engines**: Create a new class implementing `ITTSEngine` without modifying existing code
   ```python
@@ -62,7 +62,7 @@ This document explains the architectural principles applied throughout the codeb
 
 **Definition:** Objects of a superclass should be replaceable with objects of a subclass without breaking the application.
 
-**Application in KokoroMoviePy:**
+**Application in PRISM:**
 
 - **TTS Engine substitution**: Any `ITTSEngine` implementation can replace `KokoroTTSEngine`
   ```python
@@ -94,7 +94,7 @@ This document explains the architectural principles applied throughout the codeb
 
 **Definition:** Clients should not be forced to depend on interfaces they don't use.
 
-**Application in KokoroMoviePy:**
+**Application in PRISM:**
 
 - **Focused interfaces**: Each interface defines only the methods needed by its clients
   - `ITextReader` has only `read()` - no unnecessary write methods
@@ -114,7 +114,7 @@ This document explains the architectural principles applied throughout the codeb
 
 **Definition:** High-level modules should not depend on low-level modules. Both should depend on abstractions.
 
-**Application in KokoroMoviePy:**
+**Application in PRISM:**
 
 - **Pipeline depends on abstractions, not concretions:**
   ```python
@@ -158,7 +158,7 @@ This document explains the architectural principles applied throughout the codeb
 
 Dependency Injection (DI) is a design pattern where a component receives its dependencies from external sources rather than creating them internally. This inverts the control of dependency creation.
 
-### DI in KokoroMoviePy
+### DI in PRISM
 
 #### Constructor Injection
 
@@ -358,7 +358,7 @@ Library API → User: Path to video file
 ### Module Structure
 
 ```
-kokoromoviepy/
+prism/
 ├── api/                      # Library entry points
 │   ├── library.py            # Main API: generate_video_from_*()
 │   └── legacy.py             # Backward compatibility wrapper
@@ -606,7 +606,7 @@ result = pipeline.process(text)
 
 ## Conclusion
 
-The KokoroMoviePy architecture demonstrates how SOLID principles and dependency injection create a maintainable, testable, and extensible codebase. By separating concerns into focused components with clear interfaces, the system achieves:
+The PRISM architecture demonstrates how SOLID principles and dependency injection create a maintainable, testable, and extensible codebase. By separating concerns into focused components with clear interfaces, the system achieves:
 
 - **Modularity**: Components can be developed, tested, and maintained independently
 - **Flexibility**: Implementations can be swapped without affecting other components

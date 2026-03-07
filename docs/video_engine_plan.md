@@ -2,7 +2,7 @@
 
 ## Context
 
-KokoroMoviePy currently generates narrated videos from text: TTS produces audio + word timings, and the renderer composites subtitle frames over a solid-color background. The video output is functional but visually static — no images, no motion, no transitions.
+PRISM currently generates narrated videos from text: TTS produces audio + word timings, and the renderer composites subtitle frames over a solid-color background. The video output is functional but visually static — no images, no motion, no transitions.
 
 This plan extends the project with a **video generation engine** that stitches images into a timeline, applies motion and visual effects, supports transitions, and renders to video. The existing TTS pipeline is untouched; the engine replaces the rendering layer.
 

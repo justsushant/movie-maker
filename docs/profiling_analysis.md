@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document presents the results of profiling the refactored KokoroMoviePy codebase to identify performance bottlenecks and validate that the new architecture does not introduce unnecessary overhead.
+This document presents the results of profiling the refactored PRISM codebase to identify performance bottlenecks and validate that the new architecture does not introduce unnecessary overhead.
 
 ## Profiling Methodology
 
@@ -238,7 +238,7 @@ The architectural improvements provide:
 
 ## Conclusion
 
-The profiling analysis confirms that the refactored KokoroMoviePy architecture achieves its design goals:
+The profiling analysis confirms that the refactored PRISM architecture achieves its design goals:
 
 ✓ **No performance regressions** - all overhead is < 0.1% of total time
 ✓ **No unnecessary allocations** - memory usage is consistent and efficient

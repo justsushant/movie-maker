@@ -1,5 +1,5 @@
 """
-Integration tests for KokoroMoviePy.
+Integration tests for PRISM.
 
 This package contains two types of integration tests:
 

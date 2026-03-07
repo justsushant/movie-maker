@@ -1,5 +1,5 @@
 """
-Text processing components for KokoroMoviePy.
+Text processing components for PRISM.
 
 This module provides components for processing TTS output:
 - Data models for tokens and segments

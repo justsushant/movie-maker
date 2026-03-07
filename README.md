@@ -1,4 +1,4 @@
-# KokoroMoviePy
+# PRISM
 
 Generate narrated videos with **word-by-word subtitle highlighting** — powered by [Kokoro TTS](https://github.com/hexgrad/kokoro) and [MoviePy](https://zulko.github.io/moviepy/).
 
@@ -62,7 +62,7 @@ output/run_20260302_045525/
 
 ## Library API
 
-KokoroMoviePy can be used as a Python library for programmatic video generation:
+PRISM can be used as a Python library for programmatic video generation:
 
 ### Generate Video from Text
 
@@ -401,7 +401,7 @@ For detailed architecture documentation, see [docs/architecture.md](docs/archite
 ## Project Structure
 
 ```
-kokoromoviepy/
+prism/
 ├── api/
 │   ├── library.py           ← New library API (generate_video_from_text, generate_video_from_file)
 │   └── legacy.py            ← Legacy API (backward compatibility)

@@ -1,5 +1,5 @@
 """
-Pipeline orchestration for KokoroMoviePy.
+Pipeline orchestration for PRISM.
 
 This module provides the TTSPipeline class that orchestrates the complete
 TTS generation and text processing pipeline using dependency injection.
