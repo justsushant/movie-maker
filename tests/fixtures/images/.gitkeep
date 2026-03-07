@@ -1,0 +1,10 @@
+# Test image fixtures directory
+# 
+# This directory should contain test images for engine testing:
+# - Landscape images (1920x1080, 1280x720)
+# - Portrait images (1080x1920, 720x1280)  
+# - Square images (1080x1080)
+# - Various formats (PNG, JPEG)
+# - Different sizes (100x100 small, 4K large)
+#
+# Images can be added manually or generated programmatically in tests.

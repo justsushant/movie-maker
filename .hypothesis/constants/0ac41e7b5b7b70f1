@@ -1,0 +1,4 @@
+# file: /Users/admin/Workspace/kokoromoviepy/config/video_config.py
+# hypothesis_version: 6.151.9
+
+[1080, 1920, 'bg_color', 'fps', 'height', 'width']

@@ -4,3 +4,8 @@ moviepy
 pillow
 numpy
 pytest
+hypothesis
+
+# Video engine dependencies
+opencv-python
+scipy

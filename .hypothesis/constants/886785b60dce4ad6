@@ -1,0 +1,4 @@
+# file: /Users/admin/Workspace/kokoromoviepy/api/library.py
+# hypothesis_version: 6.151.9
+
+['Scene', 'audio_file', 'bg_color', 'fps', 'height', 'json_file', 'output_moviepy.json', 'output_moviepy.wav', 'output_video', 'output_video.mp4', 'r', 'subtitle', 'utf-8', 'width']

@@ -1,0 +1,4 @@
+# file: /Users/admin/Workspace/kokoromoviepy/engine/scene.py
+# hypothesis_version: 6.151.9
+
+[1080, 1920, 'ken_burns_zoom_in', 'ken_burns_zoom_out', 'pan_down', 'pan_left', 'pan_right', 'pan_up', 'static', 'zoom_in', 'zoom_out']

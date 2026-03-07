@@ -1,0 +1,4 @@
+# file: /Users/admin/Workspace/kokoromoviepy/config/io_config.py
+# hypothesis_version: 6.151.9
+
+['input_text', 'output_moviepy.json', 'output_moviepy.wav', 'output_video', 'output_video.mp4', 'run_dir']

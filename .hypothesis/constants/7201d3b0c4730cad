@@ -1,0 +1,4 @@
+# file: /Users/admin/Workspace/kokoromoviepy/subtitle/config.py
+# hypothesis_version: 6.151.9
+
+[0.05, 0.9, 1.0, 255, 'SubtitleConfig', 'align', 'base_color', 'bottom', 'center', 'chunk_single_line', 'direction', 'fade_old_lines', 'font_path', 'font_size', 'font_size_strategy', 'highlight_color', 'line_spacing', 'max_lines_for_height', 'max_visible_lines', 'max_width_ratio', 'max_words_per_chunk', 'min_words_per_chunk', 'mode', 'multiline_enabled', 'outline_color', 'overflow_strategy', 'scale_font_to_height', 'scale_with_height', 'sentence', 'shadow_color', 'speed', 'stacking', 'subtitle', 'text_color', 'up', 'vertical_align', 'word', 'x_margin', 'y_margin']

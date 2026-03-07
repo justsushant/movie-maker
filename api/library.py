@@ -8,7 +8,7 @@ offering a clean, library-first API for programmatic video generation.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, TYPE_CHECKING
 
 from tts.config import TTSConfig
 from tts.kokoro_engine import KokoroTTSEngine
@@ -20,13 +20,17 @@ from io_adapters.implementations import FileAudioWriter, JsonMetadataWriter
 from pipeline.orchestrator import TTSPipeline
 from rendering.video import create_video
 
+if TYPE_CHECKING:
+    from engine.scene import Scene
+
 
 def generate_video_from_text(
     text: str,
     output_dir: Path,
     tts_config: Optional[TTSConfig] = None,
     video_config: Optional[VideoConfig] = None,
-    subtitle_config: Optional[SubtitleConfig] = None
+    subtitle_config: Optional[SubtitleConfig] = None,
+    scene: Optional['Scene'] = None,
 ) -> Path:
     """
     Generate a narrated video from text.
@@ -48,6 +52,8 @@ def generate_video_from_text(
                      30fps, black background)
         subtitle_config: Subtitle configuration (uses defaults if None:
                         sentence_with_word_highlight mode, white/yellow colors)
+        scene: Optional Scene with image clips and motion effects. If provided,
+               generates video with image sequences. If None, uses solid background.
         
     Returns:
         Path to the generated video file
@@ -63,6 +69,16 @@ def generate_video_from_text(
         >>> output_dir = Path("output/my_video")
         >>> video_path = generate_video_from_text(text, output_dir)
         >>> print(f"Video created at: {video_path}")
+        
+        >>> # With Scene for image sequence
+        >>> from engine import Scene, ImageClip, MotionPreset
+        >>> scene = Scene(
+        ...     clips=[
+        ...         ImageClip("image1.jpg", duration=3.0, motion=MotionPreset.KEN_BURNS_ZOOM_IN),
+        ...         ImageClip("image2.jpg", duration=3.0, motion=MotionPreset.PAN_LEFT),
+        ...     ]
+        ... )
+        >>> video_path = generate_video_from_text(text, output_dir, scene=scene)
     """
     # Use defaults if not provided
     tts_config = tts_config or TTSConfig()
@@ -98,15 +114,25 @@ def generate_video_from_text(
     pipeline.process(text)
     
     # Build config dict for renderer (maintains backward compatibility)
+    # Use scene resolution/fps if provided, otherwise use video_config
+    if scene is not None:
+        width = scene.resolution[0]
+        height = scene.resolution[1]
+        fps = scene.fps
+    else:
+        width = video_config.width
+        height = video_config.height
+        fps = video_config.fps
+    
     renderer_config: Dict[str, Any] = {
         "json_file": str(json_file),
         "audio_file": str(audio_file),
         "output_video": str(video_file),
-        "width": video_config.width,
-        "height": video_config.height,
-        "fps": video_config.fps,
+        "width": width,
+        "height": height,
+        "fps": fps,
         "bg_color": video_config.bg_color,
-        # Add subtitle configuration
+        # FIX: Properly pass subtitle configuration
         "subtitle": subtitle_config.to_dict(),
     }
     
@@ -116,7 +142,8 @@ def generate_video_from_text(
         renderer_config,
         subtitle_source=None,  # Will use JsonSubtitleSource from json_file
         layout=None,  # Will be chosen based on subtitle_config.mode
-        renderer=None  # Will use PillowSubtitleRenderer
+        renderer=None,  # Will use PillowSubtitleRenderer
+        scene=scene,  # Pass scene through to enable engine rendering
     )
     
     return video_file
@@ -127,7 +154,8 @@ def generate_video_from_file(
     output_dir: Path,
     tts_config: Optional[TTSConfig] = None,
     video_config: Optional[VideoConfig] = None,
-    subtitle_config: Optional[SubtitleConfig] = None
+    subtitle_config: Optional[SubtitleConfig] = None,
+    scene: Optional['Scene'] = None,
 ) -> Path:
     """
     Generate a narrated video from a text file.
@@ -142,6 +170,7 @@ def generate_video_from_file(
         tts_config: TTS configuration (uses defaults if None)
         video_config: Video configuration (uses defaults if None)
         subtitle_config: Subtitle configuration (uses defaults if None)
+        scene: Optional Scene with image clips and motion effects
         
     Returns:
         Path to the generated video file
@@ -171,5 +200,6 @@ def generate_video_from_file(
         output_dir=output_dir,
         tts_config=tts_config,
         video_config=video_config,
-        subtitle_config=subtitle_config
+        subtitle_config=subtitle_config,
+        scene=scene,
     )

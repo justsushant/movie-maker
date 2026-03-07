@@ -1,0 +1,4 @@
+# file: /Users/admin/Workspace/kokoromoviepy/tts/config.py
+# hypothesis_version: 6.151.9
+
+[1.0, 'a', 'af_heart', 'lang_code', 'speed', 'voice']
