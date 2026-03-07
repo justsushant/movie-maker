@@ -1,5 +1,8 @@
 """
-Public Python API for generating TTS + subtitle video with optional custom components.
+Legacy API for generating videos from pre-existing audio and JSON files.
+
+This module maintains backward compatibility with the original api.py interface,
+allowing users to render videos when they already have TTS output files.
 """
 
 from __future__ import annotations
@@ -21,6 +24,7 @@ from renderer import create_video
 
 
 def _default_layout(mode: SubtitleMode) -> ISubtitleLayout:
+    """Select default layout implementation based on subtitle mode."""
     if mode == SubtitleMode.SENTENCE:
         return SentenceLayout()
     if mode == SubtitleMode.SENTENCE_WITH_WORD_HIGHLIGHT:
@@ -51,6 +55,10 @@ def generate_video(
 
     Use this when you already have TTS output (json_file, audio_file) and want
     to control subtitle behavior via SubtitleConfig and/or custom components.
+    
+    This is the legacy API maintained for backward compatibility. For generating
+    videos from text, use generate_video_from_text() or generate_video_from_file()
+    from the api.library module.
 
     Args:
         json_file: Path to moviepy-style subtitle JSON.
@@ -68,6 +76,7 @@ def generate_video(
         **extra_config: Merged into the config dict for SubtitleConfig.from_dict
             (e.g. text_color, highlight_color, subtitle={...}).
     """
+    # Build config dict with defaults and user overrides
     cfg: Dict[str, Any] = {
         "json_file": json_file,
         "audio_file": audio_file,
@@ -81,9 +90,12 @@ def generate_video(
         "highlight_color": (255, 255, 0),
         **extra_config,
     }
+    
+    # Build subtitle config if not provided
     if subtitle_config is None:
         subtitle_config = SubtitleConfig.from_dict(cfg)
 
+    # Delegate to renderer with appropriate components
     create_video(
         cfg,
         subtitle_source=subtitle_source if subtitle_source is not None else JsonSubtitleSource(json_file),

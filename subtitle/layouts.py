@@ -45,7 +45,7 @@ def _wrap_sentence_text(text: str, context: SubtitleLayoutContext) -> List[str]:
     if not clean:
         return []
 
-    avg_char_px = max(1, int(context.font_size * 0.55))
+    avg_char_px = max(1, int(context.font_size * 0.50))
     max_chars = max(8, context.max_text_width_px // avg_char_px)
     words = clean.split()
 
@@ -71,10 +71,11 @@ class _TimedChunk:
     text: str
     start_time: float
     end_time: float
+    word_indices: List[int]
 
 
 def _max_chars_for_context(context: SubtitleLayoutContext) -> int:
-    avg_char_px = max(1, int(context.font_size * 0.55))
+    avg_char_px = max(1, int(context.font_size * 0.50))
     return max(8, context.max_text_width_px // avg_char_px)
 
 
@@ -95,6 +96,7 @@ def _build_single_line_chunks(
                 text=segment.sentence_text.strip(),
                 start_time=segment.start_time,
                 end_time=segment.end_time,
+                word_indices=[],
             )
         ]
 
@@ -103,9 +105,10 @@ def _build_single_line_chunks(
 
     chunks: List[_TimedChunk] = []
     current_words: List[WordSegment] = []
+    current_word_indices: List[int] = []
     current_text = ""
 
-    for w in words:
+    for i, w in enumerate(words):
         word_text = w.text.strip()
         if not word_text:
             continue
@@ -119,12 +122,15 @@ def _build_single_line_chunks(
                     text=current_text,
                     start_time=current_words[0].start_time,
                     end_time=current_words[-1].end_time,
+                    word_indices=current_word_indices.copy(),
                 )
             )
             current_words = [w]
+            current_word_indices = [i]
             current_text = word_text
         else:
             current_words.append(w)
+            current_word_indices.append(i)
             current_text = tentative
 
     if current_words:
@@ -133,6 +139,7 @@ def _build_single_line_chunks(
                 text=current_text,
                 start_time=current_words[0].start_time,
                 end_time=current_words[-1].end_time,
+                word_indices=current_word_indices.copy(),
             )
         )
 
@@ -245,7 +252,11 @@ class SentenceLayout(ISubtitleLayout):
 
 
 class WordHighlightLayout(ISubtitleLayout):
-    """Sentence with one word highlighted at a time (word-by-word coloring)."""
+    """Sentence with one word highlighted at a time (word-by-word coloring).
+    
+    Uses chunking to prevent overflow: only shows words from the active chunk
+    that fits within the screen width.
+    """
 
     def layout_frame(
         self,
@@ -257,12 +268,26 @@ class WordHighlightLayout(ISubtitleLayout):
         if not segments:
             return []
         seg = segments[0]
+        
+        # Build chunks to prevent overflow
+        chunks = _build_single_line_chunks(seg, context, config)
+        active_chunk = _active_chunk_at(t, chunks)
+        
+        if active_chunk is None:
+            return []
+        
+        # Find which words belong to the active chunk using stored indices
+        active_words = [seg.words[i] for i in active_chunk.word_indices]
+        
+        if not active_words:
+            return []
+        
         y = _base_y(context, 0)
         result: List[PositionedSubtitle] = []
-        # We emit one PositionedSubtitle per word so renderer can draw each with its own color.
-        # x will be set by renderer when it has font metrics; we use relative order and store
-        # highlight flag. Renderer expects list of spans; for word-highlight it draws word by word.
-        for w in seg.words:
+        
+        # Emit one PositionedSubtitle per word in the active chunk
+        # Renderer will position them horizontally and apply colors
+        for w in active_words:
             is_highlight = w.start_time <= t <= w.end_time
             result.append(
                 PositionedSubtitle(

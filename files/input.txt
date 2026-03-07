@@ -1,1 +1,5 @@
----
+Hello world! This is a test of the refactored KokoroMoviePy system.
+
+The new architecture separates concerns into clear components: TTS engine, text processing, and video rendering.
+
+This should generate a video with word-by-word subtitle highlighting.

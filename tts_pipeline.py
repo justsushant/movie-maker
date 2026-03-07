@@ -1,15 +1,96 @@
+"""
+DEPRECATED MODULE - This module is deprecated and will be removed in a future version.
+
+This module contains the legacy MoviePySubtitleExtractor class which has been
+replaced by a modular architecture with better separation of concerns.
+
+MIGRATION GUIDE:
+===============
+
+The old MoviePySubtitleExtractor has been replaced by the new modular pipeline.
+Please migrate to the new API as follows:
+
+OLD CODE (DEPRECATED):
+----------------------
+from tts_pipeline import MoviePySubtitleExtractor
+
+extractor = MoviePySubtitleExtractor(
+    text="Hello world!",
+    lang_code='a',
+    voice='af_heart',
+    speed=1.0
+)
+extractor.export_moviepy_json("output.json")
+extractor.get_audio("output.wav")
+
+NEW CODE (RECOMMENDED):
+-----------------------
+from pathlib import Path
+from api.library import generate_video_from_text
+
+# Generate complete video from text
+video_path = generate_video_from_text(
+    text="Hello world!",
+    output_dir=Path("output")
+)
+
+# Or if you need more control over configuration:
+from tts.config import TTSConfig
+from config.video_config import VideoConfig
+
+tts_config = TTSConfig(lang_code='a', voice='af_heart', speed=1.0)
+video_config = VideoConfig(width=1920, height=1080, fps=30)
+
+video_path = generate_video_from_text(
+    text="Hello world!",
+    output_dir=Path("output"),
+    tts_config=tts_config,
+    video_config=video_config
+)
+
+BENEFITS OF NEW API:
+--------------------
+- Cleaner separation of concerns (TTS, processing, rendering)
+- Dependency injection for better testability
+- Type-safe configuration classes
+- Easier to swap TTS engines
+- Better error handling and documentation
+
+For more information, see:
+- api/library.py - Main library API
+- docs/architecture.md - Architecture documentation
+- docs/how_it_works.md - Pipeline walkthrough
+"""
+
 import json
 import re
+import warnings
 import numpy as np
 import soundfile as sf
 from kokoro import KPipeline
 
+
 class MoviePySubtitleExtractor:
     """
-    Extracts high-quality audio and a hierarchical JSON subtitle structure
-    from Kokoro TTS for use with subtitle effects in MoviePy.
+    DEPRECATED: Use api.library.generate_video_from_text() instead.
+    
+    This class is deprecated and will be removed in a future version.
+    It has been replaced by a modular architecture with better separation
+    of concerns and improved testability.
+    
+    Legacy class that extracts high-quality audio and a hierarchical JSON
+    subtitle structure from Kokoro TTS for use with subtitle effects in MoviePy.
+    
+    See module docstring for migration guide.
     """
     def __init__(self, text, lang_code='a', voice='af_heart', speed=1.0):
+        warnings.warn(
+            "MoviePySubtitleExtractor is deprecated and will be removed in a future version. "
+            "Please use api.library.generate_video_from_text() instead. "
+            "See the module docstring for a complete migration guide.",
+            DeprecationWarning,
+            stacklevel=2
+        )
         self.pipeline = KPipeline(lang_code=lang_code)
         
         # Split text into paragraphs
@@ -122,13 +203,31 @@ class MoviePySubtitleExtractor:
         return sentences
 
     def export_moviepy_json(self, json_file):
-        """Exports the hierarchical subtitle data to a JSON file."""
+        """
+        DEPRECATED: Use api.library.generate_video_from_text() instead.
+        
+        Exports the hierarchical subtitle data to a JSON file.
+        """
+        warnings.warn(
+            "export_moviepy_json() is deprecated. Use api.library.generate_video_from_text() instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
         with open(json_file, 'w', encoding='utf-8') as f:
             json.dump(self.moviepy_data, f, indent=4, ensure_ascii=False)
         print(f"Exported JSON metadata for MoviePy to {json_file}")
 
     def get_audio(self, audio_file):
-        """Saves the generated audio."""
+        """
+        DEPRECATED: Use api.library.generate_video_from_text() instead.
+        
+        Saves the generated audio.
+        """
+        warnings.warn(
+            "get_audio() is deprecated. Use api.library.generate_video_from_text() instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
         sf.write(audio_file, self.audio, 24000)
         print(f"Exported audio to {audio_file}")
 

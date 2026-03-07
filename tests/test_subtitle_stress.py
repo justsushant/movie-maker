@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+import importlib.util
 import os
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-from config import get_test_config
+# Import from config.py file (not config/ package) to avoid naming conflict
+_config_spec = importlib.util.spec_from_file_location("config_module", "config.py")
+config_py = importlib.util.module_from_spec(_config_spec)
+_config_spec.loader.exec_module(config_py)
+
 from main import run_pipeline
 from subtitle.composer import SubtitleFrameComposer
 from subtitle.interfaces import SubtitleLayoutContext
@@ -171,7 +176,7 @@ def test_subtitle_stress_rendering(
     text_path = fixture_text_dir / text_filename
 
     case_id = f"{Path(text_filename).stem}_{variant['id']}"
-    cfg = get_test_config(
+    cfg = config_py.get_test_config(
         case_id=case_id,
         overrides={
             "width": variant["width"],

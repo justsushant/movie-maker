@@ -11,3 +11,8 @@ output/
 
 files/input.txt
 .DS_Store
+
+.kiro
+.mypy_cache
+.pytest_cache
+powers/*
