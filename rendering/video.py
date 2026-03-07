@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 
 from moviepy import AudioFileClip, VideoClip
 
-from subtitle_config import SubtitleConfig, SubtitleMode
+from subtitle.config import SubtitleConfig, SubtitleMode
 from subtitle.composer import SubtitleFrameComposer
 from subtitle.interfaces import ISubtitleLayout, ISubtitleRenderer, ISubtitleSource
 from subtitle.layouts import StackingLayout, SentenceLayout, WordHighlightLayout, WordOnlyLayout

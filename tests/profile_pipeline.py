@@ -24,7 +24,7 @@ sys.path.insert(0, str(project_root))
 from api.library import generate_video_from_text
 from tts.config import TTSConfig
 from config.video_config import VideoConfig
-from subtitle_config import SubtitleConfig, SubtitleMode
+from subtitle.config import SubtitleConfig, SubtitleMode
 
 
 def profile_video_generation(

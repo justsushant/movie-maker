@@ -1,5 +1,11 @@
 """Modular subtitle pipeline: source, layout, renderer, and composer."""
 
+from subtitle.config import (
+    Color,
+    StackingConfig,
+    SubtitleConfig,
+    SubtitleMode,
+)
 from subtitle.interfaces import (
     ISubtitleLayout,
     ISubtitleRenderer,
@@ -20,6 +26,12 @@ from subtitle.renderer import PillowSubtitleRenderer
 from subtitle.composer import SubtitleFrameComposer
 
 __all__ = [
+    # Config
+    "Color",
+    "StackingConfig",
+    "SubtitleConfig",
+    "SubtitleMode",
+    # Interfaces
     "ISubtitleSource",
     "ISubtitleLayout",
     "ISubtitleRenderer",
@@ -27,6 +39,7 @@ __all__ = [
     "WordSegment",
     "PositionedSubtitle",
     "SubtitleLayoutContext",
+    # Implementations
     "JsonSubtitleSource",
     "SentenceLayout",
     "WordHighlightLayout",

@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Optional
 
-from subtitle_config import SubtitleConfig, SubtitleMode
+from subtitle.config import SubtitleConfig, SubtitleMode
 
 from subtitle.interfaces import (
     ISubtitleLayout,

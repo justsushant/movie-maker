@@ -43,7 +43,7 @@ import pytest
 from api.library import generate_video_from_text, generate_video_from_file
 from tts.config import TTSConfig
 from config.video_config import VideoConfig
-from subtitle_config import SubtitleConfig
+from subtitle.config import SubtitleConfig
 
 
 class TestGenerateVideoFromTextUnit:

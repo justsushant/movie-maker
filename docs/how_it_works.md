@@ -546,7 +546,7 @@ from pathlib import Path
 from api.library import generate_video_from_text
 from tts.config import TTSConfig
 from config.video_config import VideoConfig
-from subtitle_config import SubtitleConfig
+from subtitle.config import SubtitleConfig
 
 # Generate video with custom configuration
 video_path = generate_video_from_text(

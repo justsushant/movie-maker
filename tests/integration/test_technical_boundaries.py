@@ -21,8 +21,20 @@ from pathlib import Path
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from main import run_pipeline
+from api.library import generate_video_from_file
+from tts.config import TTSConfig
+from config.video_config import VideoConfig
+from subtitle.config import SubtitleConfig, SubtitleMode
 from subtitle.source import JsonSubtitleSource
+from tests.integration.helpers import (
+    validate_subtitle_json_structure,
+    assert_frame_has_subtitle_pixels,
+    assert_no_horizontal_edge_clipping,
+    assert_sentence_layout_wraps,
+    assert_single_line_layout,
+    get_integration_test_config,
+    run_pipeline
+)
 
 from tests.integration.helpers import (
     assert_frame_has_subtitle_pixels,

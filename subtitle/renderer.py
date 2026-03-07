@@ -6,7 +6,7 @@ from typing import List
 
 from PIL import Image, ImageDraw, ImageFont
 
-from subtitle_config import SubtitleConfig
+from subtitle.config import SubtitleConfig
 
 from subtitle.interfaces import PositionedSubtitle, SubtitleLayoutContext
 

@@ -99,7 +99,7 @@ from pathlib import Path
 from api.library import generate_video_from_text
 from tts.config import TTSConfig
 from config.video_config import VideoConfig
-from subtitle_config import SubtitleConfig, SubtitleMode
+from subtitle.config import SubtitleConfig, SubtitleMode
 
 # Configure TTS
 tts_config = TTSConfig(
@@ -178,7 +178,7 @@ from pathlib import Path
 from api.library import generate_video_from_text
 from tts.config import TTSConfig
 from config.video_config import VideoConfig
-from subtitle_config import SubtitleConfig
+from subtitle.config import SubtitleConfig
 
 # New way: generate everything from text
 text = "Your narration text here"
@@ -242,7 +242,7 @@ config = {
 ```python
 from tts.config import TTSConfig
 from config.video_config import VideoConfig
-from subtitle_config import SubtitleConfig
+from subtitle.config import SubtitleConfig
 
 tts_config = TTSConfig(
     voice="af_heart",

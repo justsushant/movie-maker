@@ -27,7 +27,7 @@ from subtitle.interfaces import SubtitleLayoutContext
 from subtitle.layouts import StackingLayout, SentenceLayout, WordHighlightLayout, WordOnlyLayout
 from subtitle.renderer import PillowSubtitleRenderer
 from subtitle.source import JsonSubtitleSource
-from subtitle_config import SubtitleConfig, SubtitleMode
+from subtitle.config import SubtitleConfig, SubtitleMode
 
 
 def _layout_for_mode(mode: SubtitleMode) -> ISubtitleLayout:
@@ -233,3 +233,48 @@ def get_integration_test_config(
         overrides["subtitle"] = subtitle_config
     
     return config_py.get_test_config(case_id=full_case_id, overrides=overrides)
+
+
+def run_pipeline(cfg: dict) -> None:
+    """
+    Run the video generation pipeline using the library API.
+    
+    This is a compatibility wrapper that converts the old config dict format
+    to the new library API calls.
+    
+    Args:
+        cfg: Configuration dictionary with keys:
+            - input_text: Path to input text file
+            - run_dir: Output directory path
+            - width, height, fps, bg_color: Video settings
+            - subtitle: Subtitle configuration dict
+    """
+    from pathlib import Path
+    from api.library import generate_video_from_file
+    from tts.config import TTSConfig
+    from config.video_config import VideoConfig
+    
+    input_file = Path(cfg["input_text"])
+    output_dir = Path(cfg["run_dir"])
+    
+    # Extract subtitle config
+    subtitle_dict = cfg.get("subtitle", {})
+    subtitle_config = SubtitleConfig.from_dict({"subtitle": subtitle_dict})
+    
+    # Create config objects
+    tts_config = TTSConfig()  # Use defaults
+    video_config = VideoConfig(
+        width=cfg.get("width", 1920),
+        height=cfg.get("height", 1080),
+        fps=cfg.get("fps", 30),
+        bg_color=cfg.get("bg_color", (0, 0, 0))
+    )
+    
+    # Generate video
+    generate_video_from_file(
+        input_file=input_file,
+        output_dir=output_dir,
+        tts_config=tts_config,
+        video_config=video_config,
+        subtitle_config=subtitle_config
+    )

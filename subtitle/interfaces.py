@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, List, Protocol, Tuple
 
-from subtitle_config import SubtitleConfig
+from subtitle.config import SubtitleConfig
 
 if TYPE_CHECKING:
     from PIL import Image

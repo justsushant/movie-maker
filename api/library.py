@@ -13,12 +13,12 @@ from typing import Optional, Dict, Any
 from tts.config import TTSConfig
 from tts.kokoro_engine import KokoroTTSEngine
 from config.video_config import VideoConfig
-from subtitle_config import SubtitleConfig
+from subtitle.config import SubtitleConfig
 from processing.punctuation import PunctuationMerger
 from processing.grouping import SentenceGrouper
 from io_adapters.implementations import FileAudioWriter, JsonMetadataWriter
 from pipeline.orchestrator import TTSPipeline
-from renderer import create_video
+from rendering.video import create_video
 
 
 def generate_video_from_text(

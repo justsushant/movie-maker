@@ -18,7 +18,7 @@ Layout is **dimension-aware**: `SubtitleLayoutContext.from_config(width, height,
 Create from the global config dict or directly in Python:
 
 ```python
-from subtitle_config import SubtitleConfig, SubtitleMode
+from subtitle.config import SubtitleConfig, SubtitleMode
 
 # From existing config dict (e.g. from config.get_config())
 cfg = get_config()
@@ -73,7 +73,7 @@ In the global config dict you can put a `subtitle` key with these options; `Subt
 Use `api.generate_video` when you have existing JSON + audio and want to control subtitles:
 
 ```python
-from subtitle_config import SubtitleConfig, SubtitleMode
+from subtitle.config import SubtitleConfig, SubtitleMode
 from api import generate_video
 
 subtitle_config = SubtitleConfig(

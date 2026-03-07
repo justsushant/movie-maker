@@ -11,7 +11,7 @@ from subtitle.layouts import (
     _wrap_sentence_text,
     WordHighlightLayout,
 )
-from subtitle_config import SubtitleConfig
+from subtitle.config import SubtitleConfig
 
 
 class TestCharacterWidthEstimation:
