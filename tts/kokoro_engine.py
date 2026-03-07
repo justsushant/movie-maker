@@ -70,25 +70,28 @@ class KokoroTTSEngine(ITTSEngine):
             )
             
             paragraph_audio = []
-            paragraph_tokens = []
             
             for result in generator:
+                # Calculate time offset for this batch based on ALL accumulated audio
+                # This includes: previous paragraphs + current paragraph batches processed so far
+                time_offset = (
+                    sum(len(seg) for seg in audio_segments) / 24000 +
+                    sum(len(chunk) for chunk in paragraph_audio) / 24000
+                )
+                
+                # Convert Kokoro tokens to our format with offset immediately
+                # Skip tokens with None timestamps (e.g., special characters)
+                for token in result.tokens:
+                    if token.start_ts is not None and token.end_ts is not None:
+                        all_tokens.append(TTSToken(
+                            text=token.text,
+                            whitespace=token.whitespace,
+                            start_ts=token.start_ts + time_offset,
+                            end_ts=token.end_ts + time_offset
+                        ))
+                
+                # Accumulate audio for next iteration
                 paragraph_audio.append(result.audio.cpu().numpy())
-                paragraph_tokens.extend(result.tokens)
-            
-            # Calculate time offset for this paragraph based on previous audio
-            time_offset = sum(len(seg) for seg in audio_segments) / 24000 if audio_segments else 0
-            
-            # Convert Kokoro tokens to our format with offset
-            # Skip tokens with None timestamps (e.g., special characters)
-            for token in paragraph_tokens:
-                if token.start_ts is not None and token.end_ts is not None:
-                    all_tokens.append(TTSToken(
-                        text=token.text,
-                        whitespace=token.whitespace,
-                        start_ts=token.start_ts + time_offset,
-                        end_ts=token.end_ts + time_offset
-                    ))
             
             if paragraph_audio:
                 audio_segments.append(np.concatenate(paragraph_audio))
