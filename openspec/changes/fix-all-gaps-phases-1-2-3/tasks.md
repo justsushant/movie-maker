@@ -1,0 +1,321 @@
+# Implementation Tasks: Complete Video Engine Phases 1-3
+
+## 1. Phase 3 - Beat Synchronization
+
+- [ ] 1.1 Implement ScenePlanner._analyze_audio() method
+- [ ] 1.2 Add audio import error handling (librosa ImportError)
+- [ ] 1.3 Add audio file error handling (FileNotFoundError, ValueError)
+- [ ] 1.4 Implement ScenePlanner._apply_beat_sync() method
+- [ ] 1.5 Implement BeatSync.NONE handling (no-op, preserve timings)
+- [ ] 1.6 Implement BeatSync.NEAREST_BEAT logic (adjust start to nearest beat)
+- [ ] 1.7 Implement BeatSync.BEAT_GRID logic (adjust both start and end to beats)
+- [ ] 1.8 Add beat sync validation (positive durations, no overlaps)
+- [ ] 1.9 Add beat sync error handling and logging
+- [ ] 1.10 Update ScenePlanner.plan() to call _analyze_audio() and _apply_beat_sync()
+- [ ] 1.11 Update ResolvedTimeline dataclass with audio_sync attribute
+- [ ] 1.12 Update ResolvedTimeline initialization in planner
+- [ ] 1.13 Write unit tests for _analyze_audio() method
+- [ ] 1.14 Write unit tests for _apply_beat_sync() method
+- [ ] 1.15 Write unit tests for beat sync validation logic
+- [ ] 1.16 Write integration test: Scene with audio + beat-synced transitions
+- [ ] 1.17 Write property test: BeatSync NONE preserves timing
+- [ ] 1.18 Write property test: BeatSync NEAREST_BEAT snaps to beats
+- [ ] 1.19 Write property test: BeatSync BEAT_GRID snaps both boundaries
+- [ ] 1.20 Write property test: Beat sync without audio falls back
+- [ ] 1.21 Write property test: Beat sync preserves valid durations
+
+## 2. Phase 1 - Easing Functions
+
+- [ ] 2.1 Implement ease_in_quadratic(t) function
+- [ ] 2.2 Implement ease_out_quadratic(t) function
+- [ ] 2.3 Implement ease_in_out_quadratic(t) function
+- [ ] 2.4 Implement ease_in_quartic(t) function
+- [ ] 2.5 Implement ease_out_quartic(t) function
+- [ ] 2.6 Implement ease_in_out_quartic(t) function
+- [ ] 2.7 Implement ease_in_quintic(t) function
+- [ ] 2.8 Implement ease_out_quintic(t) function
+- [ ] 2.9 Implement ease_in_out_quintic(t) function
+- [ ] 2.10 Implement ease_in_exponential(t) function
+- [ ] 2.11 Implement ease_out_exponential(t) function
+- [ ] 2.12 Implement ease_in_out_exponential(t) function
+- [ ] 2.13 Implement ease_in_sine(t) function
+- [ ] 2.14 Implement ease_out_sine(t) function
+- [ ] 2.15 Implement ease_in_out_sine(t) function
+- [ ] 2.16 Implement ease_in_circular(t) function
+- [ ] 2.17 Implement ease_out_circular(t) function
+- [ ] 2.18 Implement ease_in_out_circular(t) function
+- [ ] 2.19 Implement ease_in_elastic(t) function
+- [ ] 2.20 Implement ease_out_elastic(t) function
+- [ ] 2.21 Implement ease_in_out_elastic(t) function
+- [ ] 2.22 Implement ease_in_back(t) function
+- [ ] 2.23 Implement ease_out_back(t) function
+- [ ] 2.24 Implement ease_in_out_back(t) function
+- [ ] 2.25 Implement spring(t) function (requires scipy)
+- [ ] 2.26 Implement cubic_bezier(t) function
+- [ ] 2.27 Implement step(t, num_steps) function
+- [ ] 2.28 Implement cubic_spline(t, control_points) function (requires scipy)
+- [ ] 2.29 Add scipy import checks for spring() and cubic_spline()
+- [ ] 2.30 Add MotionPreset.SLOW_ZOOM_IN to enum
+- [ ] 2.31 Implement SLOW_ZOOM_IN in compute_motion_path()
+- [ ] 2.32 Update engine/__init__.py exports
+- [ ] 2.33 Write unit tests for all quadratic easing functions
+- [ ] 2.34 Write unit tests for all quartic easing functions
+- [ ] 2.35 Write unit tests for all quintic easing functions
+- [ ] 2.36 Write unit tests for all exponential easing functions
+- [ ] 2.37 Write unit tests for all sine easing functions
+- [ ] 2.38 Write unit tests for all circular easing functions
+- [ ] 2.39 Write unit tests for all elastic easing functions
+- [ ] 2.40 Write unit tests for all back easing functions
+- [ ] 2.41 Write unit tests for spring() function
+- [ ] 2.42 Write unit tests for cubic_bezier() function
+- [ ] 2.43 Write unit tests for step() function
+- [ ] 2.44 Write unit tests for cubic_spline() function
+- [ ] 2.45 Write property tests for all easing functions (boundary values, monotonicity)
+- [ ] 2.46 Write integration test: Scene with new easing functions
+- [ ] 2.47 Add scipy to requirements.txt (optional dependency)
+
+## 3. Phase 2 - Color Effects
+
+- [ ] 3.1 Create engine/effects/blur.py module with __init__.py
+- [ ] 3.2 Implement hue_shift(amount) factory
+- [ ] 3.3 Implement color_temperature(warmth) factory
+- [ ] 3.4 Implement tint(color, opacity) factory
+- [ ] 3.5 Implement sepia() factory
+- [ ] 3.6 Implement grayscale() factory
+- [ ] 3.7 Implement invert() factory
+- [ ] 3.8 Implement posterize(levels) factory
+- [ ] 3.9 Implement solarize(threshold) factory
+- [ ] 3.10 Implement gamma_correction(gamma) factory
+- [ ] 3.11 Implement curves(r_curve, g_curve, b_curve) factory
+- [ ] 3.12 Implement channel_mixer(r_weights, g_weights, b_weights) factory
+- [ ] 3.13 Implement duotone(color1, color2) factory
+- [ ] 3.14 Implement tricolor(color1, color2, color3) factory
+- [ ] 3.15 Implement cinematic_teal_orange() factory
+- [ ] 3.16 Implement bleach_bypass() factory
+- [ ] 3.17 Implement cross_process() factory
+- [ ] 3.18 Implement auto_white_balance() factory
+- [ ] 3.19 Implement vibrance(amount) factory
+- [ ] 3.20 Implement color_pulse(intensity, duration) factory
+- [ ] 3.21 Implement fade_to_color(color) factory
+- [ ] 3.22 Implement thermal() factory
+- [ ] 3.23 Update engine/__init__.py with new color effect exports
+- [ ] 3.24 Write unit tests for hue_shift (HSV conversion, color rotation)
+- [ ] 3.25 Write unit tests for color_temperature (R/B channel adjustments)
+- [ ] 3.26 Write unit tests for tint (alpha blending)
+- [ ] 3.27 Write unit tests for sepia (matrix transformation)
+- [ ] 3.28 Write unit tests for grayscale (luminance calculation)
+- [ ] 3.29 Write unit tests for invert (pixel inversion)
+- [ ] 3.30 Write unit tests for posterize (quantization)
+- [ ] 3.31 Write unit tests for solarize (threshold inversion)
+- [ ] 3.32 Write unit tests for gamma_correction (pow transformation)
+- [ ] 3.33 Write unit tests for curves (LUT application)
+- [ ] 3.34 Write unit tests for channel_mixer (matrix multiply)
+- [ ] 3.35 Write unit tests for duotone (luminance mapping)
+- [ ] 3.36 Write unit tests for tricolor (gradient mapping)
+- [ ] 3.37 Write unit tests for cinematic_teal_orange (HSV selective adjustment)
+- [ ] 3.38 Write unit tests for bleach_bypass (grayscale blend)
+- [ ] 3.39 Write unit tests for cross_process (S-curve adjustment)
+- [ ] 3.40 Write unit tests for auto_white_balance (Gray-world algorithm)
+- [ ] 3.41 Write unit tests for vibrance (selective saturation)
+- [ ] 3.42 Write unit tests for color_pulse (time-based animation)
+- [ ] 3.43 Write unit tests for fade_to_color (lerp to color)
+- [ ] 3.44 Write unit tests for thermal (colormap application)
+- [ ] 3.45 Write property tests for all color effects (value ranges, clamping)
+- [ ] 3.46 Write integration test: Scene with multiple color effects
+
+## 4. Phase 2 - Blur Effects
+
+- [ ] 4.1 Implement gaussian_blur(radius) factory
+- [ ] 4.2 Implement box_blur(size) factory
+- [ ] 4.3 Implement motion_blur(angle, distance) factory
+- [ ] 4.4 Implement radial_blur(strength) factory
+- [ ] 4.5 Implement zoom_blur(strength) factory
+- [ ] 4.6 Implement tilt_shift(blur_amount, focus_y) factory
+- [ ] 4.7 Implement depth_of_field(depth_map, focal_depth) factory
+- [ ] 4.8 Implement sharpen(strength) factory
+- [ ] 4.9 Implement pixelate(block_size) factory
+- [ ] 4.10 Implement bilateral_filter(d, sigma_color, sigma_space) factory
+- [ ] 4.11 Implement animated_blur(base_radius, max_radius) factory
+- [ ] 4.12 Update engine/__init__.py with blur effect exports
+- [ ] 4.13 Write unit tests for gaussian_blur (cv2.GaussianBlur)
+- [ ] 4.14 Write unit tests for box_blur (cv2.blur)
+- [ ] 4.15 Write unit tests for motion_blur (line kernel, angle)
+- [ ] 4.16 Write unit tests for radial_blur (radial averaging)
+- [ ] 4.17 Write unit tests for zoom_blur (multi-scale blend)
+- [ ] 4.18 Write unit tests for tilt_shift (gradient mask + variable blur)
+- [ ] 4.19 Write unit tests for depth_of_field (per-pixel blur)
+- [ ] 4.20 Write unit tests for sharpen (unsharp mask)
+- [ ] 4.21 Write unit tests for pixelate (downscale + upscale)
+- [ ] 4.22 Write unit tests for bilateral_filter (edge preservation)
+- [ ] 4.23 Write unit tests for animated_blur (radius interpolation)
+- [ ] 4.24 Write property tests for all blur effects (dimensions unchanged, dtype unchanged)
+- [ ] 4.25 Write integration test: Scene with blur effects
+
+## 5. Phase 2 - Texture Effects
+
+- [ ] 5.1 Create engine/effects/texture.py module with __init__.py
+- [ ] 5.2 Implement colored_noise(intensity) factory
+- [ ] 5.3 Implement scan_lines(intensity) factory
+- [ ] 5.4 Implement letterbox(height) factory
+- [ ] 5.5 Implement border(size, color) factory
+- [ ] 5.6 Implement gradient_overlay(start_color, end_color, direction) factory
+- [ ] 5.7 Implement image_watermark(image, position, opacity) factory
+- [ ] 5.8 Implement pattern_overlay(pattern) factory
+- [ ] 5.9 Implement light_leak(intensity) factory
+- [ ] 5.10 Implement bokeh_overlay(radius, intensity) factory
+- [ ] 5.11 Implement dust_and_scratches(intensity) factory
+- [ ] 5.12 Implement lens_flare(position, intensity) factory
+- [ ] 5.13 Implement snow(density) factory
+- [ ] 5.14 Implement rain(intensity, angle) factory
+- [ ] 5.15 Implement confetti() factory
+- [ ] 5.16 Implement floating_particles() factory
+- [ ] 5.17 Implement sparkle() factory
+- [ ] 5.18 Implement smoke_fog(intensity) factory
+- [ ] 5.19 Implement progress_bar() factory
+- [ ] 5.20 Update engine/__init__.py with texture effect exports
+- [ ] 5.21 Write unit tests for colored_noise (per-channel random)
+- [ ] 5.22 Write unit tests for scan_lines (row multiplication)
+- [ ] 5.23 Write unit tests for letterbox (pixel row setting)
+- [ ] 5.24 Write unit tests for border (rectangle drawing)
+- [ ] 5.25 Write unit tests for gradient_overlay (gradient generation)
+- [ ] 5.26 Write unit tests for image_watermark (alpha compositing)
+- [ ] 5.27 Write unit tests for pattern_overlay (tiling)
+- [ ] 5.28 Write unit tests for light_leak (Gaussian blobs)
+- [ ] 5.29 Write unit tests for bokeh_overlay (circle drawing)
+- [ ] 5.30 Write unit tests for dust_and_scratches (random drawing)
+- [ ] 5.31 Write unit tests for lens_flare (radial gradients)
+- [ ] 5.32 Write unit tests for snow (particle system)
+- [ ] 5.33 Write unit tests for rain (particle system)
+- [ ] 5.34 Write unit tests for confetti (particle system)
+- [ ] 5.35 Write unit tests for floating_particles (Perlin noise)
+- [ ] 5.36 Write unit tests for sparkle (random flashing)
+- [ ] 5.37 Write unit tests for smoke_fog (Perlin noise field)
+- [ ] 5.38 Write unit tests for progress_bar (rectangle width calculation)
+- [ ] 5.39 Write property tests for texture effects (overlay opacity, particle counts)
+- [ ] 5.40 Write integration test: Scene with texture effects
+
+## 6. Phase 2 - Stylization Effects
+
+- [ ] 6.1 Create engine/effects/stylize.py module with __init__.py
+- [ ] 6.2 Implement edge_detection(threshold1, threshold2) factory
+- [ ] 6.3 Implement sketch() factory
+- [ ] 6.4 Implement oil_painting(sigma_s, sigma_r) factory
+- [ ] 6.5 Implement emboss() factory
+- [ ] 6.6 Implement halftone(dot_size) factory
+- [ ] 6.7 Implement chromatic_aberration(offset) factory
+- [ ] 6.8 Implement glitch_rgb_split() factory
+- [ ] 6.9 Implement glitch_block_displacement() factory
+- [ ] 6.10 Implement glitch_scan_line_shift() factory
+- [ ] 6.11 Implement glitch_color_corruption() factory
+- [ ] 6.12 Implement crt_retro() factory
+- [ ] 6.13 Implement vhs_tape_distortion() factory
+- [ ] 6.14 Implement threshold() factory
+- [ ] 6.15 Implement dithering() factory
+- [ ] 6.16 Implement mosaic_stained_glass() factory
+- [ ] 6.17 Update engine/__init__.py with stylization effect exports
+- [ ] 6.18 Write unit tests for edge_detection (cv2.Canny)
+- [ ] 6.19 Write unit tests for sketch (cv2.pencilSketch)
+- [ ] 6.20 Write unit tests for oil_painting (cv2.stylization)
+- [ ] 6.21 Write unit tests for emboss (convolution)
+- [ ] 6.22 Write unit tests for halftone (dot radius mapping)
+- [ ] 6.23 Write unit tests for chromatic_aberration (channel offset)
+- [ ] 6.24 Write unit tests for glitch_rgb_split (large channel shift)
+- [ ] 6.25 Write unit tests for glitch_block_displacement (row shifts)
+- [ ] 6.26 Write unit tests for glitch_scan_line_shift (row offsets)
+- [ ] 6.27 Write unit tests for glitch_color_corruption (channel swaps)
+- [ ] 6.28 Write unit tests for crt_retro (combined effects)
+- [ ] 6.29 Write unit tests for vhs_tape_distortion (combined effects)
+- [ ] 6.30 Write unit tests for threshold (binary conversion)
+- [ ] 6.31 Write unit tests for dithering (Floyd-Steinberg)
+- [ ] 6.32 Write unit tests for mosaic_stained_glass (Voronoi cells)
+- [ ] 6.33 Write property tests for stylization effects (output dtype, dimensions)
+- [ ] 6.34 Write integration test: Scene with stylization effects
+
+## 7. Phase 2 - Typography Effects
+
+- [ ] 7.1 Create engine/typography/animated_text.py module with __init__.py
+- [ ] 7.2 Implement static_text(text, x, y, font, color) factory
+- [ ] 7.3 Implement fade_in_text(text, duration) factory
+- [ ] 7.4 Implement fade_out_text(text, duration) factory
+- [ ] 7.5 Implement fly_in(direction) factory
+- [ ] 7.6 Implement fly_out(direction) factory
+- [ ] 7.7 Implement scale_up() factory
+- [ ] 7.8 Implement scale_down() factory
+- [ ] 7.9 Implement bounce_in() factory
+- [ ] 7.10 Implement elastic_in() factory
+- [ ] 7.11 Implement typewriter() factory
+- [ ] 7.12 Implement word_by_word_reveal() factory
+- [ ] 7.13 Implement word_highlight() factory
+- [ ] 7.14 Implement kinetic_typography() factory
+- [ ] 7.15 Implement drop_shadow(offset, color, blur_radius) factory
+- [ ] 7.16 Implement outline(stroke_width, stroke_color) factory
+- [ ] 7.17 Implement glow(blur_radius, color) factory
+- [ ] 7.18 Implement lower_third(direction) factory
+- [ ] 7.19 Implement ticker(text, speed) factory
+- [ ] 7.20 Implement vertical_scroll(text) factory
+- [ ] 7.21 Implement counter(start, end) factory
+- [ ] 7.22 Implement subtitle_karaoke_sweep() factory
+- [ ] 7.23 Update engine/__init__.py with typography effect exports
+- [ ] 7.24 Write unit tests for static_text (PIL text rendering)
+- [ ] 7.25 Write unit tests for fade_in_text / fade_out_text (alpha animation)
+- [ ] 7.26 Write unit tests for motion effects (position animation)
+- [ ] 7.27 Write unit tests for content-based effects (character/word reveal)
+- [ ] 7.28 Write unit tests for visual enhancements (shadow, outline, glow)
+- [ ] 7.29 Write unit tests for layout effects (bars, scrolling)
+- [ ] 7.30 Write unit tests for utility functions (counter, karaoke)
+- [ ] 7.31 Write property tests for typography effects (text rendering correctness)
+- [ ] 7.32 Write integration test: Scene with typography effects
+
+## 8. Phase 2 - Spatial Effects
+
+- [ ] 8.1 Create engine/effects/spatial.py module with __init__.py
+- [ ] 8.2 Implement rotate(angle) factory
+- [ ] 8.3 Implement flip_horizontal() factory
+- [ ] 8.4 Implement flip_vertical() factory
+- [ ] 8.5 Implement camera_shake(intensity) factory
+- [ ] 8.6 Implement perspective_tilt(tilt_x, tilt_y) factory
+- [ ] 8.7 Implement barrel_distortion(strength) factory
+- [ ] 8.8 Implement pincushion_distortion(strength) factory
+- [ ] 8.9 Implement crop(x1, y1, x2, y2) factory
+- [ ] 8.10 Implement animated_crop(rect_start, rect_end) factory
+- [ ] 8.11 Update engine/__init__.py with spatial effect exports
+- [ ] 8.12 Write unit tests for rotate (cv2.getRotationMatrix2D + warpAffine)
+- [ ] 8.13 Write unit tests for flip_horizontal / flip_vertical (cv2.flip)
+- [ ] 8.14 Write unit tests for camera_shake (random offsets)
+- [ ] 8.15 Write unit tests for perspective_tilt (cv2.getPerspectiveTransform)
+- [ ] 8.16 Write unit tests for barrel_distortion (cv2.remap)
+- [ ] 8.17 Write unit tests for pincushion_distortion (cv2.remap)
+- [ ] 8.18 Write unit tests for crop (array slicing)
+- [ ] 8.19 Write unit tests for animated_crop (interpolation)
+- [ ] 8.20 Write property tests for spatial effects (output dimensions)
+- [ ] 8.21 Write integration test: Scene with spatial effects
+
+## 9. Phase 2 - Temporal Effects
+
+- [ ] 9.1 Create engine/effects/temporal.py module with __init__.py
+- [ ] 9.2 Implement motion_trail(num_frames, fade_factor) factory
+- [ ] 9.3 Implement ghosting() factory
+- [ ] 9.4 Implement strobe(frequency, color) factory
+- [ ] 9.5 Implement freeze_frame(freeze_time, duration) factory
+- [ ] 9.6 Implement flash_frame(timestamp, color) factory
+- [ ] 9.7 Update engine/__init__.py with temporal effect exports
+- [ ] 9.8 Write unit tests for motion_trail (ring buffer)
+- [ ] 9.9 Write unit tests for ghosting (frame blending)
+- [ ] 9.10 Write unit tests for strobe (frame alternation)
+- [ ] 9.11 Write unit tests for freeze_frame (frame caching)
+- [ ] 9.12 Write unit tests for flash_frame (frame replacement)
+- [ ] 9.13 Write property tests for temporal effects (state management)
+- [ ] 9.14 Write integration test: Scene with temporal effects
+
+## 10. Testing & Documentation
+
+- [ ] 10.1 Run all existing tests and ensure they pass (backward compatibility)
+- [ ] 10.2 Write performance benchmarks for new effects (target <150ms at 1080p)
+- [ ] 10.3 Create visual regression test fixtures for representative effects
+- [ ] 10.4 Update docs/video_engine.md with new effects documentation
+- [ ] 10.5 Add example scripts demonstrating new effects
+- [ ] 10.6 Verify scipy is listed as optional dependency in requirements.txt
+- [ ] 10.7 Create example scene using beat sync + multiple new effects
+- [ ] 10.8 Run complete test suite and ensure all tests pass
+- [ ] 10.9 Verify backward compatibility with Phase 1 and Phase 2 scenes
+- [ ] 10.10 Generate video with all new features to validate end-to-end functionality
