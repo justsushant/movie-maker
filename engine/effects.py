@@ -464,8 +464,8 @@ class EnergyZoom:
     
     def apply(self, frame: np.ndarray, t: float, progress: float) -> np.ndarray:
         """Apply energy-driven zoom effect to frame."""
-        # Graceful degradation if no audio
-        if self.audio_sync is None:
+        # Graceful degradation if no audio or empty energy data
+        if self.audio_sync is None or len(self.audio_sync.energy_times) == 0:
             return frame
         
         # Query energy at current time
@@ -533,8 +533,8 @@ class EnergyBrightness:
     
     def apply(self, frame: np.ndarray, t: float, progress: float) -> np.ndarray:
         """Apply energy-driven brightness effect to frame."""
-        # Graceful degradation if no audio
-        if self.audio_sync is None:
+        # Graceful degradation if no audio or empty energy data
+        if self.audio_sync is None or len(self.audio_sync.energy_times) == 0:
             return frame
         
         # Query energy at current time
@@ -591,8 +591,8 @@ class EnergyShake:
     
     def apply(self, frame: np.ndarray, t: float, progress: float) -> np.ndarray:
         """Apply energy-driven shake effect to frame."""
-        # Graceful degradation if no audio
-        if self.audio_sync is None:
+        # Graceful degradation if no audio or empty energy data
+        if self.audio_sync is None or len(self.audio_sync.energy_times) == 0:
             return frame
         
         # Query energy at current time
@@ -659,8 +659,8 @@ class SpectralColorShift:
     
     def apply(self, frame: np.ndarray, t: float, progress: float) -> np.ndarray:
         """Apply spectral-driven color shift effect to frame."""
-        # Graceful degradation if no audio
-        if self.audio_sync is None:
+        # Graceful degradation if no audio or empty spectral data
+        if self.audio_sync is None or len(self.audio_sync.spectral_times) == 0:
             return frame
         
         # Query spectral centroid at current time

@@ -11,6 +11,7 @@ Write text + add images → run one command → get a professional video with sy
 - 📝 **Karaoke Subtitles** - Word-by-word highlighting in multiple styles
 - 🎨 **Cinematic Effects** - Color grading, vignettes, film grain
 - 🔄 **24 Transitions** - Crossfades, slides, wipes, animated effects
+- 🎵 **Audio-Reactive** - Visuals that respond to beats, onsets, and energy (Phase 3)
 - 🎯 **Simple API** - Declarative Scene DSL for video composition
 
 ## Installation
@@ -19,6 +20,7 @@ Write text + add images → run one command → get a professional video with sy
 
 - Python 3.10 or higher
 - GPU recommended for faster TTS generation (CPU works but is slower)
+- **Optional**: librosa for audio-reactive features (Phase 3)
 
 ### Setup
 
@@ -33,9 +35,15 @@ This creates a `.venv` with Python 3.10 and installs all dependencies from `requ
 - `moviepy` — Video composition and rendering
 - `pillow` — Subtitle text rendering
 - `numpy` — Audio and video array processing
+- `opencv-python` — Image transforms and effects
+- `scipy` — Easing curves and signal processing
+- `librosa` (optional) — Audio analysis for Phase 3 features
 - `pytest` — Testing framework
+- `hypothesis` — Property-based testing
 
 > **First run:** Kokoro will automatically download the TTS model weights (~300 MB) and the spaCy English model.
+
+> **Audio features:** If librosa is not installed, Phase 3 audio-reactive features will be disabled but all other functionality works normally.
 
 ## 🚀 Quick Start
 
@@ -94,6 +102,9 @@ python examples/demo_phase2_showcase.py
 # Quick visual demo (no TTS)
 python examples/demo_phase2_simple.py
 
+# Audio-reactive demo (Phase 3)
+python examples/demo_phase3_audio_reactive.py
+
 # Dragon legends example
 python examples/dragon/create_dragon_video.py
 ```
@@ -118,15 +129,22 @@ python examples/dragon/create_dragon_video.py
 - **Animated**: Fade in/out, pulse
 - **Chainable**: Combine multiple effects
 
-### Example with Video Engine
+### Audio-Reactive Features (Phase 3) ✨ NEW
+- **Beat Synchronization**: Transitions snap to musical beats
+- **Onset Effects**: Flash and zoom pulse triggered by audio transients
+- **Energy Effects**: Zoom, brightness, and shake driven by audio loudness
+- **Spectral Effects**: Color temperature shifts based on audio tone
+- **Graceful Degradation**: All audio features are optional
+
+### Example with Video Engine (Phase 3 - Audio-Reactive)
 
 ```python
 from pathlib import Path
 from api.library import generate_video_from_text
-from engine.scene import Scene, ImageClip, MotionPreset, Transition, TransitionType
+from engine.scene import Scene, ImageClip, MotionPreset, Transition, TransitionType, BeatSync
 from engine.effects import brightness, vignette, chain_effects
 
-# Create cinematic scene
+# Create audio-reactive scene
 scene = Scene(
     clips=[
         ImageClip(
@@ -148,17 +166,22 @@ scene = Scene(
         ),
     ],
     transitions=[
-        Transition(type=TransitionType.CROSSFADE, duration=0.8)
+        Transition(
+            type=TransitionType.CROSSFADE,
+            duration=0.8,
+            sync=BeatSync.NEAREST_BEAT  # Snap to beats!
+        )
     ],
+    audio="audio/music.mp3",  # Audio for beat sync and reactive effects
     resolution=(1920, 1080),
     fps=30
 )
 
-# Generate video
-text = "Watch as images come to life with motion and effects."
+# Generate video with audio-reactive features
+text = "Watch as images dance to the music."
 video_path = generate_video_from_text(
     text=text,
-    output_dir=Path("output/cinematic"),
+    output_dir=Path("output/audio_reactive"),
     scene=scene
 )
 ```
@@ -223,18 +246,19 @@ video_path = generate_video_from_text(
 ## 🧪 Testing
 
 ```bash
-make test              # Run all tests (278 passing)
+make test              # Run all tests (300+ passing)
 make test-unit         # Unit tests only
 make test-integration  # Integration tests with TTS
 make test-stress       # Stress tests across resolutions
 ```
 
 **Test Coverage:**
-- 278 tests passing (62 Phase 2 + 216 Phase 1)
+- 300+ tests passing (Phase 1 + Phase 2 + Phase 3)
 - Unit tests for all components
 - Integration tests for complete pipeline
-- Property-based tests for correctness
+- Property-based tests for correctness (26 properties validated)
 - Visual regression tests
+- Audio analysis and sync tests
 
 ## 🛠️ Make Commands
 
@@ -277,19 +301,22 @@ prism/
 - Cinematic color grading
 - Rapid prototyping
 
-## 🚀 What's New in Phase 2
+## 🚀 What's New in Phase 3
 
-- ✅ 24 transition types (crossfade, slides, wipes, animated)
-- ✅ Visual effects (color grading, vignette, film grain)
-- ✅ Effect chaining
-- ✅ Full backward compatibility
-- ✅ 278 tests passing
+- ✅ Audio analysis with librosa (beats, onsets, energy, spectral features)
+- ✅ Beat-synchronized transitions (NEAREST_BEAT, BEAT_GRID modes)
+- ✅ 6 audio-reactive effects (onset flash/zoom, energy zoom/brightness/shake, spectral color shift)
+- ✅ Graceful degradation (works without librosa or audio files)
+- ✅ 26 property-based tests validating correctness
+- ✅ Full backward compatibility with Phase 1 and Phase 2
 
 ## 📊 Performance
 
 - **1080p rendering**: ~2-3ms per frame (no effects)
 - **With effects**: ~5-10ms per effect
 - **Transitions**: Blend <50ms, Geometric <100ms, Animated <150ms
+- **Audio analysis**: ~0.5-1.0s for 10-second audio file
+- **Audio-reactive effects**: <20% overhead vs Phase 2
 - **10-second video**: ~1-2 seconds to render + encoding time
 
 **[📖 Performance Details →](docs/performance_benchmarks.md)**

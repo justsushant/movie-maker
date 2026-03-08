@@ -424,3 +424,104 @@ def test_multiple_clips_with_different_audio_effects(test_audio_path, test_image
     for frame in [frame1, frame2, frame3]:
         assert frame.shape == (480, 640, 3)
         assert frame.dtype == np.uint8
+
+
+def test_error_recovery_with_invalid_audio_path(test_image_path, image_loader, caplog):
+    """
+    Test error recovery when audio file path is invalid.
+    
+    Verifies that:
+    - System logs error when audio file doesn't exist
+    - Scene planning continues without audio analysis
+    - Video renders without audio features
+    - AudioSync is None in timeline
+    - Beat sync falls back to declared timings
+    - Audio-reactive effects degrade gracefully
+    
+    Validates: Requirements 12.3, 14.2, 14.3
+    """
+    if not test_image_path.exists():
+        pytest.skip(f"Test image not found: {test_image_path}")
+    
+    # Create scene with invalid audio path
+    invalid_audio_path = Path("nonexistent/audio/file.wav")
+    
+    scene = Scene(
+        resolution=(640, 480),
+        fps=30,
+        audio=invalid_audio_path,  # Invalid path
+        clips=[
+            ImageClip(source=test_image_path, duration=2.0),
+            ImageClip(source=test_image_path, duration=2.0)
+        ],
+        transitions=[
+            Transition(
+                type=TransitionType.CROSSFADE,
+                duration=0.5,
+                sync=BeatSync.NEAREST_BEAT  # Should fall back to declared timing
+            )
+        ]
+    )
+    
+    # Plan scene - should not raise exception
+    image_loader = ImageLoader()
+    planner = ScenePlanner()
+    
+    # Capture logs
+    import logging
+    with caplog.at_level(logging.ERROR):
+        timeline = planner.plan(scene, image_loader)
+    
+    # Verify error was logged
+    assert any("audio" in record.message.lower() or "error" in record.message.lower() 
+               for record in caplog.records), \
+        "Should log error about audio file"
+    
+    # Verify AudioSync is None
+    assert timeline.audio_sync is None, \
+        "AudioSync should be None when audio file is invalid"
+    
+    # Verify beat sync fell back to declared timing
+    # Expected transition start: 2.0 - 0.5 = 1.5s
+    expected_start = 1.5
+    actual_start = timeline.transitions[0].start_time
+    
+    assert abs(actual_start - expected_start) < 0.01, \
+        f"Beat sync should fall back to declared timing: expected {expected_start}, got {actual_start}"
+    
+    # Add audio-reactive effects (should degrade gracefully)
+    timeline.clips[0].effects = [
+        OnsetFlash(None, flash_duration=0.2, intensity=0.3),
+        EnergyZoom(None, zoom_range=(1.0, 1.2), energy_range=(0.0, 1.0))
+    ]
+    
+    # Render frames - should work without errors
+    renderer = FrameRenderer(timeline, image_loader)
+    
+    frame1 = renderer.render_frame(0.5)
+    frame2 = renderer.render_frame(1.5)
+    
+    assert frame1 is not None, "Frame should render despite invalid audio"
+    assert frame2 is not None, "Frame should render despite invalid audio"
+    
+    # Verify frames have correct shape
+    assert frame1.shape == (480, 640, 3)
+    assert frame2.shape == (480, 640, 3)
+    assert frame1.dtype == np.uint8
+    assert frame2.dtype == np.uint8
+    
+    # Verify audio-reactive effects returned frames unchanged (graceful degradation)
+    # Render same frame without effects for comparison
+    timeline.clips[0].effects = []
+    frame_no_effects = renderer.render_frame(0.5)
+    
+    # Re-add effects and render again
+    timeline.clips[0].effects = [
+        OnsetFlash(None, flash_duration=0.2, intensity=0.3),
+        EnergyZoom(None, zoom_range=(1.0, 1.2), energy_range=(0.0, 1.0))
+    ]
+    frame_with_effects = renderer.render_frame(0.5)
+    
+    # Frames should be identical (effects did nothing)
+    assert np.array_equal(frame_no_effects, frame_with_effects), \
+        "Audio-reactive effects should return frames unchanged when AudioSync is None"

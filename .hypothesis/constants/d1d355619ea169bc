@@ -1,0 +1,4 @@
+# file: /Users/admin/Workspace/kokoromoviepy/engine/scene.py
+# hypothesis_version: 6.151.9
+
+[1080, 1920, 'EasingFunction', 'beat_grid', 'blinds_horizontal', 'blinds_vertical', 'clock_wipe', 'crossfade', 'diamond_wipe', 'fade_through_black', 'fade_through_white', 'glitch', 'iris_close', 'iris_open', 'ken_burns_zoom_in', 'ken_burns_zoom_out', 'nearest_beat', 'none', 'pan_down', 'pan_left', 'pan_right', 'pan_up', 'pixelate', 'push_down', 'push_left', 'push_right', 'push_up', 'slide_down', 'slide_left', 'slide_right', 'slide_up', 'static', 'whip_pan', 'wipe_down', 'wipe_left', 'wipe_right', 'wipe_up', 'zoom_in', 'zoom_out', 'zoom_through']

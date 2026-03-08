@@ -1,0 +1,11 @@
+# Project Context and Rules
+
+This project uses specific directories for specifications, tasks, and documentation. As an AI assistant (OpenCode/Antigravity), you should always prioritize checking these directories when working on tasks, designing features, or looking for context.
+
+## Specifications and Tasks (`.kiro/`)
+- Always check the `.kiro/` directory (specifically `.kiro/specs/`, `.kiro/prompts/`, `.kiro/skills/`, and `.kiro/steering/`) for any task definitions, specifications, and previous AI steering documents.
+- If a user asks to implement a feature or apply a change, look for the corresponding specification inside `.kiro/`.
+
+## Documentation (`docs/`)
+- The `docs/` directory contains all project documentation, including architecture rules, API documentation, and setup instructions.
+- Before making significant architectural changes or creating new modules, read the relevant files in `docs/` to ensure your changes align with the project design.
