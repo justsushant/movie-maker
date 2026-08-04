@@ -1,4 +1,4 @@
-# PRISM Examples
+# movie-maker Examples
 
 Working examples demonstrating all video engine phases (1-4).
 

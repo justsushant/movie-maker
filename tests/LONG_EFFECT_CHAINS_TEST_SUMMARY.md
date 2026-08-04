@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes the test suite for long effect chains with 10+ effects (`tests/test_long_effect_chains.py`). The tests verify that the PRISM video engine can handle long effect chains without performance degradation, memory leaks, or correctness issues.
+This document summarizes the test suite for long effect chains with 10+ effects (`tests/test_long_effect_chains.py`). The tests verify that the movie-maker video engine can handle long effect chains without performance degradation, memory leaks, or correctness issues.
 
 **Task:** 8.7 Test effect chains with 10+ effects  
 **Spec:** `.kiro/specs/video-engine-phase4-verification/`  
@@ -223,7 +223,7 @@ If performance degrades:
 
 ## Conclusion
 
-The long effect chain tests demonstrate that PRISM's video engine can handle chains of 10-20 effects without issues:
+The long effect chain tests demonstrate that movie-maker's video engine can handle chains of 10-20 effects without issues:
 
 ✅ **Performance**: Linear scaling confirmed  
 ✅ **Memory**: No leaks detected  

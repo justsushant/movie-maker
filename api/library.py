@@ -1,7 +1,7 @@
 """
 Library API for generating narrated videos from text.
 
-This module provides the main entry points for the PRISM library,
+This module provides the main entry points for the movie-maker library,
 offering a clean, library-first API for programmatic video generation.
 """
 

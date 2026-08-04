@@ -4,7 +4,7 @@ This document explains the full pipeline from text input to final video output, 
 
 ## Architecture Overview
 
-PRISM follows a **layered, modular architecture** with clear separation of concerns. The refactored codebase uses dependency injection throughout, making components testable, swappable, and maintainable.
+movie-maker follows a **layered, modular architecture** with clear separation of concerns. The refactored codebase uses dependency injection throughout, making components testable, swappable, and maintainable.
 
 ### Component Diagram
 

@@ -1,6 +1,6 @@
 # Engagement Levers and Limits
 
-This document maps every knob in the PRISM pipeline to the engagement
+This document maps every knob in the movie-maker pipeline to the engagement
 dimension it affects, describes current technical and creative limits, and
 points to runnable examples that exercise them.
 

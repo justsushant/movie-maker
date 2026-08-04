@@ -1,5 +1,5 @@
 """
-TTS module for PRISM.
+TTS module for movie-maker.
 
 This module provides abstractions for text-to-speech engines, allowing
 different TTS implementations to be swapped without modifying downstream

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate a video from Nietzsche's Overman text using PRISM API.
+Generate a video from Nietzsche's Overman text using movie-maker API.
 """
 
 from pathlib import Path

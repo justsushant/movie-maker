@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document records performance benchmarks for the PRISM video generation pipeline. These benchmarks were conducted to verify that the refactored codebase maintains comparable performance to the original implementation.
+This document records performance benchmarks for the movie-maker video generation pipeline. These benchmarks were conducted to verify that the refactored codebase maintains comparable performance to the original implementation.
 
 ## Benchmark Methodology
 
@@ -176,7 +176,7 @@ The benchmark script:
 
 ## Conclusion
 
-The refactored PRISM codebase demonstrates **excellent performance characteristics** with:
+The refactored movie-maker codebase demonstrates **excellent performance characteristics** with:
 - ✓ No performance regressions compared to baseline expectations
 - ✓ Consistent memory usage (~110 MB peak)
 - ✓ Predictable execution time scaling

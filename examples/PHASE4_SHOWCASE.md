@@ -4,7 +4,7 @@ This document describes the Phase 4 effect showcase scripts for generating multi
 
 ## Overview
 
-Phase 4 adds **56+ rich visual effects** to the PRISM video engine:
+Phase 4 adds **56+ rich visual effects** to the movie-maker video engine:
 - **20+ color effects** (sepia, hue shift, posterize, etc.)
 - **10+ blur effects** (gaussian, motion, pixelate, etc.)
 - **11+ texture effects** (scan lines, vignette, light leak, etc.)
@@ -69,7 +69,7 @@ python examples/mahabharata/create_mahabharata_video_phase4.py
 
 ### System Requirements
 - Python 3.10+
-- PRISM with Phase 4 effects installed
+- movie-maker with Phase 4 effects installed
 - ~2GB RAM per video render
 - ~500MB disk space per output video
 

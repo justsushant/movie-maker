@@ -1,4 +1,4 @@
-# PRISM
+# movie-maker
 
 Generate narrated videos with **word-by-word subtitle highlighting** over **image sequences with motion effects and transitions** — powered by [Kokoro TTS](https://github.com/hexgrad/kokoro) and [MoviePy](https://zulko.github.io/moviepy/).
 
@@ -190,7 +190,7 @@ video_path = generate_video_from_text(
 
 ## 🐍 Library API
 
-PRISM can be used as a Python library for programmatic video generation.
+movie-maker can be used as a Python library for programmatic video generation.
 
 ### Basic Usage
 
@@ -199,7 +199,7 @@ from pathlib import Path
 from api.library import generate_video_from_text
 
 # Simple text-to-video
-text = "Hello world! This is PRISM."
+text = "Hello world! This is movie-maker."
 video_path = generate_video_from_text(text, Path("output/hello"))
 ```
 
@@ -273,7 +273,7 @@ make clean             # Delete outputs
 ## 📁 Project Structure
 
 ```
-prism/
+movie-maker/
 ├── api/               # Library API
 ├── engine/            # Video engine (motion, transitions, effects)
 ├── subtitle/          # Subtitle system

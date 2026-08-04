@@ -1,5 +1,5 @@
 """
-Video generation engine for PRISM.
+Video generation engine for movie-maker.
 
 This module provides a clip-based video composition system that generates
 frames from image sequences with camera motion effects (Ken Burns, pan, zoom),

@@ -1,5 +1,5 @@
 """
-Real-world scenario integration tests for PRISM.
+Real-world scenario integration tests for movie-maker.
 
 These tests validate the complete pipeline with realistic content creator scripts.
 Each test represents an actual use case and uses appropriate configuration for

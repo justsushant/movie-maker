@@ -51,7 +51,7 @@ Creates 7 videos in `output/dragon_phase4/`:
 
 - Dragon images in `files/dragon/` directory
 - At least 10 images (JPG or PNG format)
-- PRISM video engine with Phase 4 effects
+- movie-maker video engine with Phase 4 effects
 
 ## Performance
 

@@ -1,4 +1,4 @@
-"""Configuration classes for PRISM."""
+"""Configuration classes for movie-maker."""
 
 from config.io_config import IOConfig
 from config.video_config import VideoConfig

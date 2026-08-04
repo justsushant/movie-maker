@@ -1,7 +1,7 @@
 """
 Max-Engagement Short-Form Content Demo
 
-Demonstrates the upper bound of engagement using every lever in the PRISM
+Demonstrates the upper bound of engagement using every lever in the movie-maker
 pipeline in a single run:
 
   TTS narration + word-highlight subtitles

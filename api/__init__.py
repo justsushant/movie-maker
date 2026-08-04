@@ -1,5 +1,5 @@
 """
-Library API for PRISM.
+Library API for movie-maker.
 
 This module provides the public programmatic API for generating
 narrated videos from text using the refactored pipeline architecture.

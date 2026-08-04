@@ -1,5 +1,5 @@
 """
-Integration tests for PRISM.
+Integration tests for movie-maker.
 
 This package contains two types of integration tests:
 

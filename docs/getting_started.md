@@ -1,4 +1,4 @@
-# Getting Started with PRISM
+# Getting Started with movie-maker
 
 ## Quick Start (30 seconds)
 
@@ -36,7 +36,7 @@ open output/run_*/output_video.mp4
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd prism
+cd movie-maker
 
 # Create virtual environment and install dependencies
 make setup
@@ -101,7 +101,7 @@ from pathlib import Path
 from api.library import generate_video_from_text
 
 text = """
-Welcome to PRISM.
+Welcome to movie-maker.
 This tool generates narrated videos with word-by-word subtitle highlighting.
 It's powered by Kokoro TTS and MoviePy.
 """

@@ -1,4 +1,4 @@
-"""I/O abstractions for PRISM.
+"""I/O abstractions for movie-maker.
 
 This module provides interfaces and implementations for input/output operations,
 enabling testability and flexibility in how data is read and written.

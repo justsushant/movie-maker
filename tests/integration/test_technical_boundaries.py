@@ -1,5 +1,5 @@
 """
-Technical boundary integration tests for PRISM.
+Technical boundary integration tests for movie-maker.
 
 These tests validate algorithm correctness at edge cases and boundary conditions.
 Each test focuses on a specific technical aspect with automated assertions.

@@ -1,6 +1,6 @@
-# PRISM Documentation
+# movie-maker Documentation
 
-Complete documentation for the PRISM video generation system.
+Complete documentation for the movie-maker video generation system.
 
 ## 📚 Documentation Index
 
@@ -76,7 +76,7 @@ python -c "
 from pathlib import Path
 from api.library import generate_video_from_text
 
-text = 'Hello world! This is PRISM.'
+text = 'Hello world! This is movie-maker.'
 video_path = generate_video_from_text(text, Path('output/hello'))
 print(f'Video: {video_path}')
 "

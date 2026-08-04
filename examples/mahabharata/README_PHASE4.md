@@ -56,7 +56,7 @@ Creates 8 videos in `output/mahabharata_phase4/`:
 
 - Mahabharata images in `files/mahabharata/` directory
 - At least 10 images (JPG or PNG format)
-- PRISM video engine with Phase 4 effects
+- movie-maker video engine with Phase 4 effects
 
 ## Performance
 

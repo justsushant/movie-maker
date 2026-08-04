@@ -1,5 +1,5 @@
 """
-Text processing components for PRISM.
+Text processing components for movie-maker.
 
 This module provides components for processing TTS output:
 - Data models for tokens and segments
