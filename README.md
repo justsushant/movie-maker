@@ -8,9 +8,9 @@ Powered by [Kokoro TTS](https://github.com/hexgrad/kokoro) and [MoviePy](https:/
 
 This video was generated entirely by movie-maker: TTS narration, karaoke subtitles, Ken Burns motion, transitions, and cinematic effects.
 
-<video src="docs/wolves.mp4" controls width="720">
-  <a href="docs/wolves.mp4">Watch sample video (wolves.mp4)</a>
-</video>
+![Sample output preview](docs/wolves-preview.gif)
+
+▶ **[Watch full sample video (30s, with audio)](docs/wolves.mp4)**
 
 Recreate a similar result:
 
