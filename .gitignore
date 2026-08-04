@@ -8,6 +8,7 @@ output/
 *.srt
 *.wav
 *.mp4
+!docs/wolves.mp4
 
 files/input.txt
 .DS_Store
