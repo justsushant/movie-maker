@@ -8,9 +8,7 @@ Powered by [Kokoro TTS](https://github.com/hexgrad/kokoro) and [MoviePy](https:/
 
 This video was generated entirely by movie-maker: TTS narration, karaoke subtitles, Ken Burns motion, transitions, and cinematic effects.
 
-![Sample output preview](docs/wolves-preview.gif)
-
-▶ **[Watch full sample video (30s, with audio)](docs/wolves.mp4)**
+https://github.com/user-attachments/assets/52c6fc5e-d634-4562-b5fa-0886646c95bd
 
 Recreate a similar result:
 
