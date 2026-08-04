@@ -396,6 +396,40 @@ your_project/
 └── your_script.py            # Your video generation script
 ```
 
+## Duration Alignment (Scene vs Narration)
+
+When combining a Scene with TTS narration via `generate_video_from_text()`, the
+final video duration is `max(audio_duration, timeline_duration)`:
+
+- **Scene shorter than narration** — the last frame is held as a freeze-frame
+  until the narration finishes.  This looks unintentional.
+- **Scene longer than narration** — the video continues with visuals after the
+  speech ends.  This can work as a deliberate outro.
+
+To avoid mismatches, size the scene so its effective timeline covers the
+narration:
+
+```
+effective_duration = sum(clip.duration for clip in clips)
+                   - sum(t.duration for t in transitions)
+```
+
+A practical approach: estimate narration length (~140 words per minute for
+natural speech), then set clip durations so the effective duration is slightly
+longer than the estimate.
+
+```python
+word_count = len(narration.split())
+estimated_seconds = word_count / 140 * 60  # ~2.3 words/second
+num_clips = 7
+clip_duration = (estimated_seconds + 5) / num_clips  # small buffer
+```
+
+There is currently no automatic duration-stretch.  If you need exact alignment,
+run TTS first (via `TTSPipeline`), measure the output audio length, then build
+the Scene to match before calling `create_video()`.  See
+`examples/engagement_benchmark.py` for a working pattern.
+
 ## Next Steps
 
 1. **Start Simple**: Create a basic video with 2-3 clips and crossfade transitions
@@ -941,3 +975,817 @@ For issues or questions:
 3. Examine integration tests for usage patterns
 4. Check logs for warnings about audio analysis or beat sync
 
+
+
+---
+
+# Phase 4 Video Engine - Rich Visual Effects Library
+
+## Overview
+
+Phase 4 expands the effects library with **56+ professional visual effects** organized into four categories: color manipulation, blur and focus, texture overlays, and stylization. These effects enable everything from subtle color grading to dramatic artistic transformations.
+
+## What's New in Phase 4
+
+- **21 Color Effects**: Grayscale, sepia, hue shift, color temperature, tinting, gamma correction, and more
+- **11 Blur Effects**: Box blur, Gaussian blur, motion blur, radial blur, tilt-shift, depth of field, and more
+- **12 Texture Effects**: Scan lines, letterbox, vignette, gradients, watermarks, borders, light leaks, and more
+- **12 Stylization Effects**: Edge detection, sketch, oil painting, emboss, chromatic aberration, glitch effects, and more
+- **Text Overlay**: Add text labels, titles, and captions with customizable styling
+
+All Phase 4 effects follow the same simple API pattern and can be chained together for complex looks.
+
+## Effect Categories
+
+### Category 1: Color Effects (21 effects)
+
+Transform colors, adjust tones, and create color grades.
+
+#### Basic Color Adjustments
+
+```python
+from engine.effects import grayscale, invert, sepia
+
+# Convert to grayscale
+grayscale()
+
+# Invert all colors
+invert()
+
+# Apply sepia tone (vintage brown)
+sepia()
+```
+
+#### Color Manipulation
+
+```python
+from engine.effects import hue_shift, color_temperature, tint, gamma_correction
+
+# Shift hue around color wheel
+hue_shift(shift=30.0)  # -180 to 180 degrees
+
+# Adjust color temperature
+color_temperature(kelvin=5000.0)  # <5000: warm, >6500: cool
+
+# Apply color tint overlay
+tint(color=(255, 200, 150), alpha=0.3)  # Warm tint
+
+# Gamma correction (non-linear brightness)
+gamma_correction(gamma=1.2)  # >1.0: darken, <1.0: brighten
+```
+
+#### Advanced Color Grading
+
+```python
+from engine.effects import (
+    channel_mixer, duotone, cinematic_teal_orange,
+    auto_white_balance, vibrance
+)
+
+# Cross-blend RGB channels
+channel_mixer(
+    red=(1.0, 0.0, 0.0),    # Red output from RGB inputs
+    green=(0.0, 1.0, 0.0),  # Green output
+    blue=(0.0, 0.0, 1.0)    # Blue output
+)
+
+# Two-color gradient mapping
+duotone(
+    dark_color=(20, 30, 50),      # Dark blue for shadows
+    light_color=(255, 220, 180)   # Warm for highlights
+)
+
+# Cinematic teal-orange look
+cinematic_teal_orange(intensity=1.0)  # 0.0 to 1.0
+
+# Automatic white balance
+auto_white_balance()
+
+# Boost low-saturation colors
+vibrance(amount=1.0)  # 0.0 to 2.0
+```
+
+#### Special Color Effects
+
+```python
+from engine.effects import (
+    color_pulse, fade_to_color, thermal,
+    posterize, solarize
+)
+
+# Pulsing color effect
+color_pulse(
+    frequency=2.0,           # Pulses per second
+    color=(255, 100, 100),   # Red pulse
+    amount=0.5               # Intensity
+)
+
+# Fade to color over time (progress-driven)
+fade_to_color(color=(0, 0, 0))  # Fade to black
+
+# Thermal/infrared false-color
+thermal()
+
+# Reduce color levels (posterization)
+posterize(bits=4)  # 1 to 8 bits per channel
+
+# Invert bright pixels (solarization)
+solarize(threshold=128)  # 0 to 255
+```
+
+#### Custom Color Curves
+
+```python
+from engine.effects import curves_lut, tricolor, bleach_bypass, cross_process
+import numpy as np
+
+# Custom curves using lookup tables
+lut_r = np.linspace(0, 255, 256).astype(np.uint8)  # Linear
+lut_g = np.linspace(0, 255, 256).astype(np.uint8)
+lut_b = np.linspace(0, 255, 256).astype(np.uint8)
+curves_lut(lut_r=lut_r, lut_g=lut_g, lut_b=lut_b)
+
+# Three-color gradient map
+tricolor(
+    color1=(20, 30, 50),      # Shadows
+    color2=(150, 120, 100),   # Midtones
+    color3=(255, 220, 180)    # Highlights
+)
+
+# Film processing effects
+bleach_bypass()  # Desaturated, high-contrast
+cross_process()  # Per-channel S-curve
+```
+
+### Category 2: Blur Effects (11 effects)
+
+Control focus, create depth, and add motion blur.
+
+#### Basic Blur
+
+```python
+from engine.effects import box_blur, gaussian_blur
+
+# Uniform blur
+box_blur(kernel_size=5)  # Odd number
+
+# Gaussian blur (smoother)
+gaussian_blur(kernel_size=5, sigma=0)  # sigma=0: auto
+```
+
+#### Directional Blur
+
+```python
+from engine.effects import motion_blur, radial_blur
+
+# Motion blur (simulates camera movement)
+motion_blur(angle=0, amount=15)  # angle: 0=horizontal
+
+# Radial blur (from center)
+radial_blur(amount=10)
+```
+
+#### Sharpening and Pixelation
+
+```python
+from engine.effects import sharpen, pixelate
+
+# Sharpen using unsharp mask
+sharpen(amount=1.0)
+
+# Pixelation/mosaic effect
+pixelate(block_size=8)
+```
+
+#### Advanced Blur
+
+```python
+from engine.effects import (
+    bilateral_blur, tilt_shift, depth_of_field,
+    zoom_blur, animated_blur
+)
+
+# Edge-preserving smoothing
+bilateral_blur(d=9, sigma_color=75, sigma_space=75)
+
+# Tilt-shift/miniature effect
+tilt_shift(
+    blur_amount=15,
+    gradient_start=0.3,  # Sharp region start
+    gradient_end=0.7     # Sharp region end
+)
+
+# Depth of field (simulates lens focus)
+depth_of_field(
+    focus_distance=0.5,  # 0.0 to 1.0
+    aperture=5.0         # Larger = more blur
+)
+
+# Zoom blur effect
+zoom_blur(strength=0.5)  # 0.0 to 1.0
+
+# Animated blur (changes over time)
+animated_blur(min_kernel=3, max_kernel=15)
+```
+
+### Category 3: Texture Effects (12 effects)
+
+Add overlays, borders, and texture elements.
+
+#### Screen Effects
+
+```python
+from engine.effects import scan_lines, letterbox, vignette_simple
+
+# CRT scan lines
+scan_lines(spacing=2, intensity=0.5)  # Every 2nd row
+
+# Cinematic letterbox bars
+letterbox(top=100, bottom=100, color=(0, 0, 0))
+
+# Simple vignette (darken edges)
+vignette_simple(intensity=0.5)  # 0.0 to 1.0
+```
+
+#### Overlays
+
+```python
+from engine.effects import (
+    gradient_overlay, image_watermark, pattern_overlay
+)
+
+# Gradient overlay
+gradient_overlay(
+    color_start=(255, 0, 0),
+    color_end=(0, 0, 255),
+    direction="vertical",  # or "horizontal"
+    alpha=0.3
+)
+
+# Image watermark
+import numpy as np
+watermark = np.zeros((100, 100, 4), dtype=np.uint8)  # RGBA
+image_watermark(
+    watermark_img=watermark,
+    position="bottom-right",  # or "top-left", "center", etc.
+    opacity=0.7,
+    scale=0.1  # Relative to frame size
+)
+
+# Repeating pattern overlay
+pattern = np.random.randint(0, 255, (50, 50, 3), dtype=np.uint8)
+pattern_overlay(pattern=pattern, opacity=0.2)
+```
+
+#### Borders and Frames
+
+```python
+from engine.effects import border, progress_bar
+
+# Border/frame effect
+border(thickness=10, color=(255, 255, 255))
+
+# Progress bar overlay
+progress_bar(
+    position="bottom",  # or "top"
+    height=5,
+    color=(255, 0, 0)
+)
+```
+
+#### Artistic Overlays
+
+```python
+from engine.effects import (
+    light_leak, bokeh_overlay, dust_scratches, lens_flare
+)
+
+# Light leak (colorful glow at edges)
+light_leak(intensity=0.3)  # 0.0 to 1.0
+
+# Bokeh circles overlay
+bokeh_overlay(num_circles=20, max_radius=50)
+
+# Dust and scratches
+dust_scratches(density=0.001)  # 0.0 to 1.0
+
+# Lens flare effect
+lens_flare(x=None, y=None)  # None = center
+```
+
+### Category 4: Stylization Effects (12 effects)
+
+Transform images into artistic styles.
+
+#### Edge and Sketch Effects
+
+```python
+from engine.effects import edge_detection, sketch, emboss
+
+# Canny edge detection
+edge_detection(threshold1=100, threshold2=200)
+
+# Pencil sketch effect
+sketch()
+
+# Emboss effect
+emboss()
+```
+
+#### Artistic Styles
+
+```python
+from engine.effects import oil_painting, dithering, halftone
+
+# Oil painting effect
+oil_painting()
+
+# Floyd-Steinberg dithering
+dithering()
+
+# Halftone effect
+halftone(dot_size=4)
+```
+
+#### Glitch Effects
+
+```python
+from engine.effects import (
+    chromatic_aberration, glitch_rgb_split,
+    glitch_block_displacement, glitch_scan_line_shift,
+    glitch_color_corruption
+)
+
+# Chromatic aberration (RGB channel offset)
+chromatic_aberration(amount=3)  # Pixels
+
+# RGB split with random offsets
+glitch_rgb_split(max_offset=20)
+
+# Block displacement glitch
+glitch_block_displacement(block_size=20, displacement=10)
+
+# Scan line shift glitch
+glitch_scan_line_shift(intensity=0.5)  # 0.0 to 1.0
+
+# Color corruption glitch
+glitch_color_corruption(intensity=0.3)  # 0.0 to 1.0
+```
+
+#### Retro Effects
+
+```python
+from engine.effects import (
+    threshold_bw, crt_retro, vhs_tape_distortion
+)
+
+# High contrast black and white
+threshold_bw(threshold=128)  # 0 to 255
+
+# CRT retro effect (scan lines + RGB blur)
+crt_retro(scanline_intensity=0.1)  # 0.0 to 1.0
+
+# VHS tape distortion
+vhs_tape_distortion(intensity=0.3)  # 0.0 to 1.0
+```
+
+### Text Overlay
+
+Add text labels, titles, and captions to your videos.
+
+```python
+from engine.effects import text_overlay
+
+# Simple text overlay
+text_overlay(
+    text="My Video Title",
+    position=(50, 50),           # Top-left corner
+    font_scale=1.0,              # 0.5 to 3.0
+    color=(255, 255, 255),       # White text
+    thickness=2,                 # 1 to 5
+    bg_color=(0, 0, 0),          # Black background
+    bg_opacity=0.7,              # 0.0 to 1.0
+    padding=10                   # Pixels
+)
+
+# Text without background
+text_overlay(
+    text="No Background",
+    position=(100, 100),
+    bg_color=None  # No background
+)
+```
+
+## Usage Examples
+
+### Example 1: Cinematic Color Grade
+
+```python
+from engine.scene import Scene, ImageClip, MotionPreset
+from engine.effects import (
+    cinematic_teal_orange, vignette_simple,
+    film_grain, letterbox
+)
+
+clip = ImageClip(
+    source="image.jpg",
+    duration=5.0,
+    motion=MotionPreset.KEN_BURNS_ZOOM_IN,
+    effects=[
+        cinematic_teal_orange(intensity=0.8),
+        vignette_simple(intensity=0.4),
+        film_grain(intensity=0.05),
+        letterbox(top=80, bottom=80, color=(0, 0, 0))
+    ]
+)
+```
+
+### Example 2: Vintage Film Look
+
+```python
+from engine.effects import (
+    sepia, dust_scratches, scan_lines, vignette_simple
+)
+
+clip = ImageClip(
+    source="image.jpg",
+    duration=5.0,
+    effects=[
+        sepia(),
+        dust_scratches(density=0.002),
+        scan_lines(spacing=3, intensity=0.3),
+        vignette_simple(intensity=0.6)
+    ]
+)
+```
+
+### Example 3: Glitch Art
+
+```python
+from engine.effects import (
+    glitch_rgb_split, glitch_block_displacement,
+    chromatic_aberration, glitch_color_corruption
+)
+
+clip = ImageClip(
+    source="image.jpg",
+    duration=3.0,
+    effects=[
+        glitch_rgb_split(max_offset=15),
+        glitch_block_displacement(block_size=30, displacement=20),
+        chromatic_aberration(amount=5),
+        glitch_color_corruption(intensity=0.2)
+    ]
+)
+```
+
+### Example 4: Dreamy Soft Focus
+
+```python
+from engine.effects import (
+    gaussian_blur, light_leak, bokeh_overlay,
+    color_temperature, vibrance
+)
+
+clip = ImageClip(
+    source="image.jpg",
+    duration=5.0,
+    effects=[
+        gaussian_blur(kernel_size=7, sigma=2),
+        light_leak(intensity=0.4),
+        bokeh_overlay(num_circles=15, max_radius=40),
+        color_temperature(kelvin=7000.0),  # Cool
+        vibrance(amount=1.3)
+    ]
+)
+```
+
+### Example 5: Dramatic Black and White
+
+```python
+from engine.effects import (
+    grayscale, contrast, vignette_simple,
+    sharpen, film_grain
+)
+
+clip = ImageClip(
+    source="image.jpg",
+    duration=5.0,
+    effects=[
+        grayscale(),
+        contrast(1.4),
+        vignette_simple(intensity=0.5),
+        sharpen(amount=1.2),
+        film_grain(intensity=0.08)
+    ]
+)
+```
+
+### Example 6: Tilt-Shift Miniature
+
+```python
+from engine.effects import (
+    tilt_shift, saturation, contrast
+)
+
+clip = ImageClip(
+    source="image.jpg",
+    duration=5.0,
+    motion=MotionPreset.PAN_LEFT,
+    effects=[
+        tilt_shift(blur_amount=20, gradient_start=0.35, gradient_end=0.65),
+        saturation(1.4),  # Boost saturation
+        contrast(1.2)
+    ]
+)
+```
+
+### Example 7: Retro VHS Look
+
+```python
+from engine.effects import (
+    vhs_tape_distortion, crt_retro, scan_lines,
+    color_temperature, film_grain
+)
+
+clip = ImageClip(
+    source="image.jpg",
+    duration=5.0,
+    effects=[
+        vhs_tape_distortion(intensity=0.4),
+        crt_retro(scanline_intensity=0.15),
+        scan_lines(spacing=2, intensity=0.4),
+        color_temperature(kelvin=5500.0),
+        film_grain(intensity=0.1)
+    ]
+)
+```
+
+### Example 8: Text Labels for Demo Videos
+
+```python
+from engine.effects import text_overlay, grayscale
+
+# Label each effect in a demo video
+clip1 = ImageClip(
+    source="image.jpg",
+    duration=3.0,
+    effects=[
+        grayscale(),
+        text_overlay("Grayscale Effect", position=(50, 50))
+    ]
+)
+
+clip2 = ImageClip(
+    source="image.jpg",
+    duration=3.0,
+    effects=[
+        sepia(),
+        text_overlay("Sepia Tone", position=(50, 50))
+    ]
+)
+```
+
+## Effect Chaining and Composition
+
+All Phase 4 effects can be chained together. Effects are applied in order:
+
+```python
+from engine.effects import (
+    brightness, contrast, saturation,
+    vignette_simple, film_grain, text_overlay
+)
+
+# Complex effect chain
+clip = ImageClip(
+    source="image.jpg",
+    duration=5.0,
+    effects=[
+        # 1. Color adjustments
+        brightness(0.1),
+        contrast(1.2),
+        saturation(1.1),
+        
+        # 2. Texture effects
+        vignette_simple(intensity=0.4),
+        film_grain(intensity=0.05),
+        
+        # 3. Text overlay (always last)
+        text_overlay("My Title", position=(50, 50))
+    ]
+)
+```
+
+**Best Practice**: Apply effects in this order:
+1. Color adjustments (brightness, contrast, saturation)
+2. Color grading (cinematic looks, tints)
+3. Blur/focus effects
+4. Texture overlays (vignette, grain, light leaks)
+5. Stylization (glitch, artistic effects)
+6. Text overlays (always last)
+
+## Performance Considerations
+
+### Effect Performance at 1080p
+
+| Effect Category | Typical Performance | Notes |
+|----------------|---------------------|-------|
+| Color Effects | 2-5ms per frame | Fast, mostly pixel operations |
+| Simple Blur | 5-15ms per frame | Depends on kernel size |
+| Advanced Blur | 15-50ms per frame | Bilateral, tilt-shift are slower |
+| Texture Overlays | 3-10ms per frame | Fast, simple blending |
+| Stylization | 10-30ms per frame | Edge detection, oil painting slower |
+| Glitch Effects | 5-15ms per frame | Random operations add variance |
+| Text Overlay | 2-5ms per frame | Fast, OpenCV rendering |
+
+### Optimization Tips
+
+1. **Test at lower resolution**: Use 720p or 480p for testing, 1080p for final export
+2. **Reduce kernel sizes**: Smaller blur kernels = faster rendering
+3. **Limit effect chains**: Each effect adds overhead; use 3-5 effects per clip
+4. **Use simpler effects**: Gaussian blur is faster than bilateral blur
+5. **Profile your pipeline**: Use `test_performance.py` to benchmark
+
+### Memory Usage
+
+- Most effects process frames in-place: minimal memory overhead
+- Image watermarks and patterns are cached: one-time memory cost
+- Large blur kernels may require temporary buffers
+- Typical memory usage: <500MB for 1080p rendering
+
+## Tips and Best Practices
+
+### Color Grading
+
+- Start with subtle adjustments (±0.1 brightness, 1.1-1.3 contrast)
+- Use `cinematic_teal_orange()` for instant professional look
+- Combine `vibrance()` with `saturation()` for natural color boost
+- Use `auto_white_balance()` before other color adjustments
+
+### Blur Effects
+
+- Gaussian blur is smoother than box blur
+- Use bilateral blur to preserve edges while smoothing
+- Tilt-shift works best on aerial/elevated shots
+- Motion blur angle: 0=horizontal, 90=vertical, 45=diagonal
+
+### Texture Effects
+
+- Vignette intensity: 0.3-0.5 for subtle, 0.6-0.8 for dramatic
+- Film grain: 0.05-0.1 for subtle texture
+- Light leaks: 0.2-0.4 intensity for natural look
+- Letterbox: 80-120 pixels for cinematic 2.39:1 look
+
+### Stylization
+
+- Glitch effects work best with short durations (1-2 seconds)
+- Combine multiple glitch effects for complex distortion
+- Use `threshold_bw()` for high-contrast graphic look
+- Oil painting and sketch effects remove fine detail
+
+### Text Overlays
+
+- Use semi-transparent backgrounds for readability
+- Position text away from edges (50+ pixels margin)
+- Font scale: 1.0 for body text, 1.5-2.0 for titles
+- White text on dark background is most readable
+
+## Complete Phase 4 Effects Reference
+
+### Color Effects (21)
+
+| Effect | Parameters | Description |
+|--------|-----------|-------------|
+| `grayscale()` | None | Convert to grayscale |
+| `invert()` | None | Invert all colors |
+| `sepia()` | None | Sepia tone (vintage brown) |
+| `hue_shift(shift)` | shift: -180 to 180 | Rotate hue around color wheel |
+| `color_temperature(kelvin)` | kelvin: 2000-10000 | Adjust warm/cool temperature |
+| `tint(color, alpha)` | color: RGB, alpha: 0-1 | Color overlay tint |
+| `gamma_correction(gamma)` | gamma: 0.5-2.0 | Non-linear brightness |
+| `channel_mixer(r, g, b)` | r/g/b: RGB weights | Cross-blend RGB channels |
+| `duotone(dark, light)` | dark/light: RGB | Two-color gradient map |
+| `cinematic_teal_orange(intensity)` | intensity: 0-1 | Teal shadows, orange highlights |
+| `auto_white_balance()` | None | Gray-world white balance |
+| `vibrance(amount)` | amount: 0-2 | Boost low-saturation colors |
+| `color_pulse(freq, color, amt)` | freq: Hz, color: RGB, amt: 0-1 | Pulsing color effect |
+| `fade_to_color(color)` | color: RGB | Fade to color (progress-driven) |
+| `thermal()` | None | Thermal/infrared false-color |
+| `posterize(bits)` | bits: 1-8 | Reduce color levels |
+| `solarize(threshold)` | threshold: 0-255 | Invert bright pixels |
+| `curves_lut(r, g, b)` | r/g/b: 256-value LUTs | Custom color curves |
+| `tricolor(c1, c2, c3)` | c1/c2/c3: RGB | Three-color gradient map |
+| `bleach_bypass()` | None | Desaturated film look |
+| `cross_process()` | None | Per-channel S-curve |
+
+### Blur Effects (11)
+
+| Effect | Parameters | Description |
+|--------|-----------|-------------|
+| `box_blur(kernel_size)` | kernel_size: odd int | Uniform blur |
+| `gaussian_blur(kernel, sigma)` | kernel: odd int, sigma: float | Smooth Gaussian blur |
+| `motion_blur(angle, amount)` | angle: degrees, amount: int | Directional motion blur |
+| `radial_blur(amount)` | amount: int | Radial blur from center |
+| `pixelate(block_size)` | block_size: int | Pixelation/mosaic |
+| `sharpen(amount)` | amount: float | Unsharp mask sharpening |
+| `bilateral_blur(d, sc, ss)` | d: int, sc/ss: float | Edge-preserving blur |
+| `tilt_shift(blur, start, end)` | blur: int, start/end: 0-1 | Miniature effect |
+| `depth_of_field(focus, aperture)` | focus: 0-1, aperture: float | Lens focus simulation |
+| `zoom_blur(strength)` | strength: 0-1 | Zoom blur effect |
+| `animated_blur(min, max)` | min/max: int | Time-varying blur |
+
+### Texture Effects (12)
+
+| Effect | Parameters | Description |
+|--------|-----------|-------------|
+| `scan_lines(spacing, intensity)` | spacing: int, intensity: 0-1 | CRT scan lines |
+| `letterbox(top, bottom, color)` | top/bottom: pixels, color: RGB | Cinematic bars |
+| `vignette_simple(intensity)` | intensity: 0-1 | Darken edges |
+| `gradient_overlay(start, end, dir, alpha)` | start/end: RGB, dir: str, alpha: 0-1 | Gradient overlay |
+| `image_watermark(img, pos, opacity, scale)` | img: array, pos: str, opacity: 0-1, scale: float | Image watermark |
+| `border(thickness, color)` | thickness: pixels, color: RGB | Border/frame |
+| `pattern_overlay(pattern, opacity)` | pattern: array, opacity: 0-1 | Repeating pattern |
+| `light_leak(intensity)` | intensity: 0-1 | Colorful edge glow |
+| `bokeh_overlay(num, radius)` | num: int, radius: int | Blurred circles |
+| `dust_scratches(density)` | density: 0-1 | Dust and scratches |
+| `lens_flare(x, y)` | x/y: pixels or None | Lens flare effect |
+| `progress_bar(pos, height, color)` | pos: str, height: pixels, color: RGB | Progress bar overlay |
+
+### Stylization Effects (12)
+
+| Effect | Parameters | Description |
+|--------|-----------|-------------|
+| `edge_detection(t1, t2)` | t1/t2: int | Canny edge detection |
+| `sketch()` | None | Pencil sketch effect |
+| `oil_painting()` | None | Oil painting style |
+| `emboss()` | None | Emboss effect |
+| `chromatic_aberration(amount)` | amount: pixels | RGB channel offset |
+| `glitch_rgb_split(max_offset)` | max_offset: pixels | Random RGB split |
+| `glitch_block_displacement(size, disp)` | size/disp: pixels | Block displacement |
+| `threshold_bw(threshold)` | threshold: 0-255 | High contrast B&W |
+| `dithering()` | None | Floyd-Steinberg dithering |
+| `halftone(dot_size)` | dot_size: pixels | Halftone effect |
+| `glitch_scan_line_shift(intensity)` | intensity: 0-1 | Scan line shift glitch |
+| `glitch_color_corruption(intensity)` | intensity: 0-1 | Color corruption glitch |
+| `crt_retro(scanline_intensity)` | scanline_intensity: 0-1 | CRT retro effect |
+| `vhs_tape_distortion(intensity)` | intensity: 0-1 | VHS distortion |
+
+### Text Overlay (1)
+
+| Effect | Parameters | Description |
+|--------|-----------|-------------|
+| `text_overlay(text, pos, scale, color, thickness, bg_color, bg_opacity, padding)` | text: str, pos: (x,y), scale: 0.5-3, color: RGB, thickness: 1-5, bg_color: RGB or None, bg_opacity: 0-1, padding: pixels | Add text with optional background |
+
+## Troubleshooting
+
+### Effect Not Visible
+
+If an effect doesn't seem to work:
+- Check parameter ranges (e.g., intensity should be 0.0-1.0, not 0-100)
+- Verify effect is in the effects list
+- Try increasing effect intensity
+- Check if effect is being overridden by later effects
+
+### Performance Issues
+
+If rendering is slow:
+- Reduce resolution for testing
+- Use smaller blur kernel sizes
+- Limit number of effects per clip (3-5 recommended)
+- Profile with `test_performance.py`
+
+### Memory Errors
+
+If running out of memory:
+- Reduce video resolution
+- Shorten clip durations
+- Remove memory-intensive effects (large blurs, oil painting)
+- Process video in segments
+
+### Color Space Issues
+
+If colors look wrong:
+- Ensure images are RGB (not BGR)
+- Check if effect expects specific color range
+- Verify input images are valid
+
+## What's Next: Phase 5-6 (Planned)
+
+- **Phase 5**: Advanced compositing (layers, masks, blend modes, alpha channels)
+- **Phase 6**: 3D transforms and perspective effects (rotation, skew, perspective)
+
+## Reference
+
+- **Phase 4 Implementation**: `.kiro/specs/video-engine-phase4-verification/`
+- **Effect Source Code**: `engine/effects.py`
+- **Test Examples**: `tests/test_phase4_effects_unit.py`
+- **Demo Scripts**: `examples/demo_phase4_rich_effects.py`
+- **Showcase Examples**: `examples/PHASE4_SHOWCASE.md`
+
+## Support
+
+For issues or questions:
+1. Check example scripts in `examples/` directory
+2. Review test files for working examples
+3. Examine `engine/effects.py` for implementation details
+4. Check `.kiro/specs/video-engine-phase4-verification/design.md` for technical details

@@ -15,4 +15,6 @@ files/input.txt
 .kiro
 .mypy_cache
 .pytest_cache
+.hypothesis/
+.coverage
 powers/*

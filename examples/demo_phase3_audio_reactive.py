@@ -10,7 +10,13 @@ This example demonstrates Phase 3 audio-reactive features:
 The demo creates a video where visuals respond dynamically to audio features.
 """
 
+import sys
 from pathlib import Path
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
 from engine.scene import Scene, ImageClip, MotionPreset, Transition, TransitionType, BeatSync
 from engine.planner import ScenePlanner
 from engine.renderer import FrameRenderer
@@ -19,7 +25,7 @@ from engine.effects import (
     OnsetFlash, OnsetZoomPulse, EnergyZoom, EnergyBrightness,
     EnergyShake, SpectralColorShift, brightness, vignette, chain_effects
 )
-from moviepy.editor import ImageSequenceClip, AudioFileClip
+from moviepy import ImageSequenceClip, AudioFileClip
 import numpy as np
 
 
@@ -141,7 +147,8 @@ def demo_basic_audio_reactive():
     # Plan scene (analyzes audio)
     print("Planning scene and analyzing audio...")
     planner = ScenePlanner()
-    timeline = planner.plan(scene)
+    image_loader = ImageLoader()
+    timeline = planner.plan(scene, image_loader)
     
     if timeline.audio_sync is None:
         print("Warning: Audio analysis failed, continuing without audio features")
@@ -168,7 +175,7 @@ def demo_basic_audio_reactive():
     renderer = FrameRenderer(timeline, image_loader)
     
     frames = []
-    total_frames = int(timeline.total_duration * scene.fps)
+    total_frames = int(timeline.duration * scene.fps)
     
     for frame_idx in range(total_frames):
         if frame_idx % 30 == 0:
@@ -184,7 +191,7 @@ def demo_basic_audio_reactive():
     print("Encoding video...")
     video_clip = ImageSequenceClip(frames, fps=scene.fps)
     audio_clip = AudioFileClip(str(audio_path))
-    final_clip = video_clip.set_audio(audio_clip)
+    final_clip = video_clip.with_audio(audio_clip)
     final_clip.write_videofile(str(output_path), codec='libx264', audio_codec='aac')
     
     print(f"✓ Video saved: {output_path}")
@@ -247,7 +254,8 @@ def demo_advanced_audio_reactive():
     # Plan scene
     print("Planning scene and analyzing audio...")
     planner = ScenePlanner()
-    timeline = planner.plan(scene)
+    image_loader = ImageLoader()
+    timeline = planner.plan(scene, image_loader)
     
     if timeline.audio_sync is None:
         print("Warning: Audio analysis failed, continuing without audio features")
@@ -300,7 +308,7 @@ def demo_advanced_audio_reactive():
     renderer = FrameRenderer(timeline, image_loader)
     
     frames = []
-    total_frames = int(timeline.total_duration * scene.fps)
+    total_frames = int(timeline.duration * scene.fps)
     
     for frame_idx in range(total_frames):
         if frame_idx % 30 == 0:
@@ -316,7 +324,7 @@ def demo_advanced_audio_reactive():
     print("Encoding video...")
     video_clip = ImageSequenceClip(frames, fps=scene.fps)
     audio_clip = AudioFileClip(str(audio_path))
-    final_clip = video_clip.set_audio(audio_clip)
+    final_clip = video_clip.with_audio(audio_clip)
     final_clip.write_videofile(str(output_path), codec='libx264', audio_codec='aac')
     
     print(f"✓ Video saved: {output_path}")
@@ -357,7 +365,8 @@ def demo_graceful_degradation():
     # Plan scene
     print("Planning scene without audio...")
     planner = ScenePlanner()
-    timeline = planner.plan(scene)
+    image_loader = ImageLoader()
+    timeline = planner.plan(scene, image_loader)
     
     print(f"AudioSync: {timeline.audio_sync}")  # Should be None
     
@@ -375,7 +384,7 @@ def demo_graceful_degradation():
     renderer = FrameRenderer(timeline, image_loader)
     
     frames = []
-    total_frames = int(timeline.total_duration * scene.fps)
+    total_frames = int(timeline.duration * scene.fps)
     
     for frame_idx in range(total_frames):
         t = frame_idx / scene.fps
