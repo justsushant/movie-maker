@@ -17,6 +17,7 @@ Complete documentation for the movie-maker video generation system.
 ### Architecture & Design
 - **[Architecture](architecture.md)** - System design, patterns, and component overview
 - **[Video Engine Plan](video_engine_plan.md)** - Roadmap and implementation phases
+- **[Social Video Backlog](social_video_backlog.md)** - Prioritized footage-editing features, improvements, bug fixes, and acceptance criteria
 
 ### Performance
 - **[Performance Benchmarks](performance_benchmarks.md)** - Rendering performance data
