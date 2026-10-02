@@ -13,7 +13,8 @@ https://github.com/user-attachments/assets/52c6fc5e-d634-4562-b5fa-0886646c95bd
 Recreate a similar result:
 
 ```bash
-python examples/engagement_max_demo.py
+make setup
+make demo
 ```
 
 Place your images in `examples/wolves/` (or point the script at another folder).
@@ -31,19 +32,34 @@ Place your images in `examples/wolves/` (or point the script at another folder).
 
 ## Quick start
 
-**Requirements:** Python 3.10+, GPU optional (faster TTS). Install [librosa](https://librosa.org/) for audio-reactive features.
+**Requirements:** Python 3.10+ (Python 3.12 recommended), `make`, and internet access for dependencies and the first model download. A GPU is optional. The requirements include librosa for audio-reactive features and MoviePy's FFmpeg dependency.
+
+Run these commands from the repository root:
 
 ```bash
 make setup
+make check
+make demo
 ```
 
-Edit `files/input.txt`, then:
+`make setup` uses `python3` to create `.venv` and installs the Python dependencies there. To choose a specific interpreter, use `make setup PYTHON=python3.12`. On macOS, install Python first if needed with `brew install python@3.12`.
+
+`make demo` runs `examples/engagement_max_demo.py` with `.venv/bin/python`; no environment activation is needed. Its output is `output/engagement_max/output_video.mp4`. Running the demo again reuses that output location.
+
+To use the Python command directly, activate the environment first:
+
+```bash
+source .venv/bin/activate
+python examples/engagement_max_demo.py
+```
+
+For the text-only pipeline, create or edit `files/input.txt`, then:
 
 ```bash
 make run
 ```
 
-Each run writes to a timestamped folder under `output/`:
+Each `make run` invocation writes to a timestamped folder under `output/`:
 
 ```
 output/run_20260308_123456/
@@ -55,7 +71,18 @@ output/run_20260308_123456/
 
 > First run downloads Kokoro model weights (~300 MB) and the spaCy English model automatically.
 
+### Setup troubleshooting
+
+- **`python3.10: No such file or directory`:** use the updated Makefile, which defaults to `python3`, or specify `make setup PYTHON=python3.12`.
+- **`ModuleNotFoundError` (for example, `numpy` or `kokoro`):** run `make setup`, then `make demo`. For direct `python` commands, activate `.venv` first; packages installed in another environment are not available here.
+- **Missing project environment:** run `make setup` from the repository root. `make install` updates dependencies in an existing `.venv`.
+- **Download/network errors:** setup needs access to PyPI; the first narration run also downloads model files from Hugging Face and the English spaCy model from GitHub. Restore connectivity and rerun the command.
+
+`make check` checks installed dependencies and the FFmpeg executable without downloading or initializing the speech model. The first `make demo` is the complete speech-generation and rendering check.
+
 ## Examples
+
+Activate `.venv` before running the `python` commands below, or use `make demo` for the wolves example.
 
 | Command | What it shows |
 |---------|---------------|

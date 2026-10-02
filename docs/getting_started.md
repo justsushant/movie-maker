@@ -1,26 +1,22 @@
 # Getting Started with movie-maker
 
-## Quick Start (30 seconds)
+## Quick Start
 
 ```bash
-# 1. Activate environment
-source .venv/bin/activate
+# Run from the repository root; first setup/model downloads can take several minutes.
+make setup
+make check
+make demo
 
-# 2. Edit your text
-echo "Hello world! This is a test." > files/input.txt
-
-# 3. Generate video
-make run
-
-# 4. Watch your video
-open output/run_*/output_video.mp4
+# Watch the demo (macOS)
+open output/engagement_max/output_video.mp4
 ```
 
 ## What You Need
 
 ### Essential Requirements
 
-1. **Python 3.10+** with virtual environment
+1. **Python 3.10+** (Python 3.12 recommended); setup creates the virtual environment
 2. **Text script** (plain text file or string)
 3. **Images** (optional, for video engine features)
 
@@ -41,10 +37,12 @@ cd movie-maker
 # Create virtual environment and install dependencies
 make setup
 
-# Verify installation
-source .venv/bin/activate
-python -c "import kokoro; print('✓ Kokoro installed')"
+# Verify dependencies and FFmpeg, then render the example
+make check
+make demo
 ```
+
+Setup defaults to `python3`. Choose another interpreter with `make setup PYTHON=python3.12`. Make targets use `.venv/bin/python`, so activation is not required. For direct Python commands in this guide, first run `source .venv/bin/activate`.
 
 ### What Gets Installed
 
